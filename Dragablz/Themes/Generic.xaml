@@ -724,7 +724,7 @@
         </Style.Triggers>
     </Style>
 
-    <Style TargetType="{x:Type local:HeaderedDragablzItem}">
+    <Style TargetType="{x:Type local:DragablzItem}" x:Key="HeaderedDragablzItemStyle">
         <Style.Setters>
             <Setter Property="Padding" Value="2"/>
             <Setter Property="BorderBrush" Value="{StaticResource TabItem.Static.Border}" />
@@ -733,7 +733,7 @@
             <Setter Property="Canvas.Top" Value="{Binding Y, RelativeSource={RelativeSource Self}}" />
             <Setter Property="Template">
                 <Setter.Value>
-                    <ControlTemplate TargetType="{x:Type local:HeaderedDragablzItem}">
+                    <ControlTemplate TargetType="{x:Type local:DragablzItem}">
                         <Grid Margin="{TemplateBinding Margin}">
                             <Border Background="White">
                                 <Border.Effect>
@@ -743,10 +743,10 @@
                             <Border BorderThickness="{TemplateBinding Border.BorderThickness}" Padding="{TemplateBinding Control.Padding}" BorderBrush="{TemplateBinding Border.BorderBrush}" Background="{TemplateBinding Panel.Background}" SnapsToDevicePixels="True">
                                 <DockPanel>
                                     <Grid DockPanel.Dock="Top" Background="{StaticResource TabItem.Static.Background}">
-                                        <ContentPresenter Content="{TemplateBinding HeaderContent}" 
-                                                          ContentTemplate="{TemplateBinding HeaderContentTemplate}" 
+                                        <ContentPresenter Content="{TemplateBinding Header}" 
+                                                          ContentTemplate="{TemplateBinding HeaderTemplate}" 
                                                           ContentStringFormat="{TemplateBinding ContentControl.ContentStringFormat}" HorizontalAlignment="{TemplateBinding Control.HorizontalContentAlignment}" 
-                                                          ContentTemplateSelector="{TemplateBinding HeaderContentTemplateSelector}"
+                                                          ContentTemplateSelector="{TemplateBinding HeaderTemplateSelector}"
                                                           VerticalAlignment="{TemplateBinding Control.VerticalContentAlignment}" 
                                                           SnapsToDevicePixels="{TemplateBinding UIElement.SnapsToDevicePixels}"
                                                           Margin="{TemplateBinding Control.Padding }"
@@ -755,8 +755,8 @@
                                                Style="{StaticResource InvisibleThumbStyle}"
                                                />
                                     </Grid>
-                                    <ContentPresenter Content="{TemplateBinding ContentControl.Content}" ContentTemplate="{TemplateBinding ContentControl.ContentTemplate}" ContentStringFormat="{TemplateBinding ContentControl.ContentStringFormat}" HorizontalAlignment="{TemplateBinding Control.HorizontalContentAlignment}" VerticalAlignment="{TemplateBinding Control.VerticalContentAlignment}" SnapsToDevicePixels="{TemplateBinding UIElement.SnapsToDevicePixels}"
-                                                      Margin="{TemplateBinding Control.Padding }"/>
+                                    <!--<ContentPresenter Content="{TemplateBinding ContentControl.Content}" ContentTemplate="{TemplateBinding ContentControl.ContentTemplate}" ContentStringFormat="{TemplateBinding ContentControl.ContentStringFormat}" HorizontalAlignment="{TemplateBinding Control.HorizontalContentAlignment}" VerticalAlignment="{TemplateBinding Control.VerticalContentAlignment}" SnapsToDevicePixels="{TemplateBinding UIElement.SnapsToDevicePixels}"
+                                                      Margin="{TemplateBinding Control.Padding }"/>-->
                                 </DockPanel>
                             </Border>
                         </Grid>
@@ -766,7 +766,7 @@
         </Style.Setters>
     </Style>
 
-    <Style TargetType="{x:Type local:HeaderedDragablzItem}" x:Key="ToolDragablzItemStyle">
+    <Style TargetType="{x:Type local:DragablzItem}" x:Key="ToolDragablzItemStyle">
         <Style.Setters>
             <Setter Property="BorderBrush" Value="{StaticResource TabItem.Static.Border}" />
             <Setter Property="BorderThickness" Value="4" />
@@ -776,7 +776,7 @@
             <Setter Property="VerticalContentAlignment" Value="Stretch" />
             <Setter Property="Template">
                 <Setter.Value>
-                    <ControlTemplate TargetType="{x:Type local:HeaderedDragablzItem}">
+                    <ControlTemplate TargetType="{x:Type local:DragablzItem}">
                         <Grid Margin="{TemplateBinding Margin}">
                             <Border Background="White">
                                 <Border.Effect>
@@ -822,10 +822,10 @@
                                                     >
                                                 <themes:SystemCommandIcon Height="10" Width="10" SystemCommandType="RestoreWindow" />
                                             </Button>
-                                            <ContentPresenter Content="{TemplateBinding HeaderContent}"                                                               
-                                                              ContentTemplate="{TemplateBinding HeaderContentTemplate}" 
+                                            <ContentPresenter Content="{TemplateBinding Header}"                                                               
+                                                              ContentTemplate="{TemplateBinding HeaderTemplate}" 
                                                               ContentStringFormat="{TemplateBinding ContentControl.ContentStringFormat}" HorizontalAlignment="{TemplateBinding Control.HorizontalContentAlignment}" 
-                                                              ContentTemplateSelector="{TemplateBinding HeaderContentTemplateSelector}"                                                          
+                                                              ContentTemplateSelector="{TemplateBinding HeaderTemplateSelector}"                                                          
                                                               SnapsToDevicePixels="{TemplateBinding UIElement.SnapsToDevicePixels}"                                                              
                                                               IsHitTestVisible="False"
                                                           />

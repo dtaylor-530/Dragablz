@@ -47,6 +47,20 @@ namespace Dragablz
             AddHandler(MouseDownEvent, new RoutedEventHandler(MouseDownHandler), true);            
         }
 
+
+
+        public bool IsHeader
+        {
+            get { return (bool)GetValue(IsHeaderProperty); }
+            set { SetValue(IsHeaderProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for IsHeader.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty IsHeaderProperty =
+            DependencyProperty.Register(nameof(IsHeader), typeof(bool), typeof(DragablzItem), new PropertyMetadata());
+
+
+
         public static readonly DependencyProperty XProperty = DependencyProperty.Register(
             "X", typeof (double), typeof (DragablzItem), new PropertyMetadata(default(double), OnXChanged));
 

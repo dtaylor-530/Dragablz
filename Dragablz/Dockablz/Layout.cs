@@ -732,13 +732,13 @@ namespace Dragablz.Dockablz
 
         private void PrepareFloatingContainerForItemOverride(DependencyObject dependencyObject, object o)
         {
-            var headeredDragablzItem = dependencyObject as HeaderedDragablzItem;
+            var headeredDragablzItem = dependencyObject as DragablzItem;
             if (headeredDragablzItem == null) return;
 
             SetIsFloatingInLayout(dependencyObject, true);
 
             var headerBinding = new Binding(FloatingItemHeaderMemberPath) {Source = o};
-            headeredDragablzItem.SetBinding(HeaderedDragablzItem.HeaderContentProperty, headerBinding);
+            headeredDragablzItem.SetBinding(DragablzItem.HeaderProperty, headerBinding);
 
             if (!string.IsNullOrWhiteSpace(FloatingItemDisplayMemberPath))
             {
@@ -771,7 +771,7 @@ namespace Dragablz.Dockablz
             if (string.IsNullOrWhiteSpace(FloatingItemHeaderMemberPath))
                 return new DragablzItem();
 
-            return new HeaderedDragablzItem();
+            return new DragablzItem() {  IsHeader = true };
         }
 
         private static void ClearingFloatingContainerForItemOverride(DependencyObject dependencyObject, object o)

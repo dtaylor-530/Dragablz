@@ -117,12 +117,12 @@
                                            Width="150" Height="100">
                         <TextBlock TextWrapping="Wrap" Margin="2 2 2 2">This is a dragablz item, is floating aroung happily, you can size it on any part of the border, and drag it anywhere.</TextBlock>
                     </dragablz:DragablzItem>
-                    <dragablz:HeaderedDragablzItem HeaderContent="Floating around"
+                    <dragablz:DragablzItem Header="Floating around"
                                                    Style="{StaticResource ToolDragablzItemStyle}"
                                                    X="110" Y="160"
                                                    Width="150" Height="100">
                         <TextBlock TextWrapping="Wrap" Margin="2 2 2 2">Ahh c'mon, this is basically just a tool window!  I know you are asking where the close button is.  Keep asking.  Haven't got there yet.  But this is WPF, so don't get lazy, just style it in for yourself!</TextBlock>
-                    </dragablz:HeaderedDragablzItem>
+                    </dragablz:DragablzItem>
                     
                 </dragablz:DragablzItemsControl>
             </Grid>            
