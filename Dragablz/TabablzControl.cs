@@ -109,7 +109,7 @@ namespace Dragablz
             //Find all loaded TabablzControl instances with tabs backed by this item and close them
             foreach(var tabWithItemContent in 
                 GetLoadedInstances().SelectMany(tc => 
-                tc._dragablzItemsControl.DragablzItems().Where(di => di.Content.Equals(tabContentItem)).Select(di => new { tc, di })))
+                tc._dragablzItemsControl.DragablzItems().Where(di => di.Header.Equals(tabContentItem)).Select(di => new { tc, di })))
             {
                 TabablzControl.CloseItem(tabWithItemContent.di, tabWithItemContent.tc);
             }

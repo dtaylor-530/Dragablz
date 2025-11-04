@@ -429,7 +429,7 @@ namespace Dragablz.Dockablz
             {
                 var itemSnapShots = floatingItemSnapShots as FloatingItemSnapShot[] ?? floatingItemSnapShots.ToArray();
                 var floatingItemSnapShot = itemSnapShots.FirstOrDefault(
-                    ss => ss.Content == floatingDragablzItem.Content);
+                    ss => ss.Content == floatingDragablzItem.Header);
                 if (floatingItemSnapShot != null)
                     floatingItemSnapShot.Apply(floatingDragablzItem);
             }
@@ -954,7 +954,7 @@ namespace Dragablz.Dockablz
                     .SelectMany(l => l.FloatingDragablzItems().Select(FloatingItemSnapShot.Take))
                     .ToList();
 
-            var content = dragablzItem.Content ?? dragablzItem;
+            var content = dragablzItem.Header ?? dragablzItem;
 
             //remove from source
             CollectionTeaser collectionTeaser;

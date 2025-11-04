@@ -25,7 +25,7 @@ namespace Dragablz
     }
 
     [TemplatePart(Name = ThumbPartName, Type = typeof(Thumb))]
-    public class DragablzItem : ContentControl
+    public class DragablzItem : TreeViewItem
     {
         public const string ThumbPartName = "PART_Thumb";
 

@@ -369,12 +369,12 @@ namespace Dragablz
 
             if (!Equals(ItemsControlFromItemContainer(dragablzItem), this)) return;
 
-            PositionMonitor.OnLocationChanged(new LocationChangedEventArgs(dragablzItem.Content, new Point(dragablzItem.X, dragablzItem.Y)));
+            PositionMonitor.OnLocationChanged(new LocationChangedEventArgs(dragablzItem.Header, new Point(dragablzItem.X, dragablzItem.Y)));
 
             var linearPositionMonitor = PositionMonitor as StackPositionMonitor;
             if (linearPositionMonitor == null) return;
 
-            var sortedItems = linearPositionMonitor.Sort(this.Containers<DragablzItem>()).Select(di => di.Content).ToArray();
+            var sortedItems = linearPositionMonitor.Sort(this.Containers<DragablzItem>()).Select(di => di.Header).ToArray();
             if (_previousSortQueryResult == null || !_previousSortQueryResult.SequenceEqual(sortedItems))
                 linearPositionMonitor.OnOrderChanged(new OrderChangedEventArgs(_previousSortQueryResult, sortedItems));
 

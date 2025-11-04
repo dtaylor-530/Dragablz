@@ -33,7 +33,7 @@ namespace Dragablz.Dockablz
             if (dragablzItem == null) throw new ArgumentNullException("dragablzItem");
 
             return new FloatingItemSnapShot(
-                dragablzItem.Content, 
+                dragablzItem.Header, 
                 new Rect(dragablzItem.X, dragablzItem.Y, dragablzItem.ActualWidth, dragablzItem.ActualHeight), 
                 Panel.GetZIndex(dragablzItem),
                 Layout.GetFloatingItemState(dragablzItem));

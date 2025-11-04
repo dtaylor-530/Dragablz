@@ -174,10 +174,15 @@
                                         <ColumnDefinition Width="*" />
                                         <ColumnDefinition Width="Auto" />
                                     </Grid.ColumnDefinitions>
-                                    <ContentPresenter Content="{TemplateBinding ContentControl.Content}" ContentTemplate="{TemplateBinding ContentControl.ContentTemplate}" ContentStringFormat="{TemplateBinding ContentControl.ContentStringFormat}" HorizontalAlignment="{TemplateBinding Control.HorizontalContentAlignment}" VerticalAlignment="{TemplateBinding Control.VerticalContentAlignment}" SnapsToDevicePixels="{TemplateBinding UIElement.SnapsToDevicePixels}"
-                                                      x:Name="contentPresenter"                                                                                            
-                                                      Margin="{TemplateBinding Control.Padding}"
-                                                      Opacity=".87"/>
+                                    <ContentPresenter    x:Name="contentPresenter"
+                                                         Content="{TemplateBinding Header}" 
+                                                         ContentTemplate="{TemplateBinding HeaderTemplate}" 
+                                                         ContentStringFormat="{TemplateBinding HeaderStringFormat}" 
+                                                         HorizontalAlignment="{TemplateBinding Control.HorizontalContentAlignment}" 
+                                                         VerticalAlignment="{TemplateBinding Control.VerticalContentAlignment}" 
+                                                         SnapsToDevicePixels="{TemplateBinding UIElement.SnapsToDevicePixels}"
+                                                         Margin="{TemplateBinding Control.Padding }"
+                                                         Opacity=".87"/>
                                     <Thumb Grid.Column="0" HorizontalAlignment="Stretch" VerticalContentAlignment="Stretch" 
                                            x:Name="PART_Thumb"
                                            Style="{StaticResource MaterialDesignInvisibleThumbStyle}" />
@@ -242,13 +247,19 @@
                                         <RowDefinition Height="*" />
                                         <RowDefinition Height="Auto" />
                                     </Grid.RowDefinitions>
-                                    <ContentPresenter Content="{TemplateBinding ContentControl.Content}" ContentTemplate="{TemplateBinding ContentControl.ContentTemplate}" ContentStringFormat="{TemplateBinding ContentControl.ContentStringFormat}" HorizontalAlignment="{TemplateBinding Control.HorizontalContentAlignment}" VerticalAlignment="{TemplateBinding Control.VerticalContentAlignment}" SnapsToDevicePixels="{TemplateBinding UIElement.SnapsToDevicePixels}"
+      
+                                    <ContentPresenter Content="{TemplateBinding Header}" 
+                                                      ContentTemplate="{TemplateBinding HeaderTemplate}" 
+                                                      ContentStringFormat="{TemplateBinding HeaderStringFormat}"
+                                                      HorizontalAlignment="{TemplateBinding Control.HorizontalContentAlignment}"
+                                                      VerticalAlignment="{TemplateBinding Control.VerticalContentAlignment}" 
+                                                      SnapsToDevicePixels="{TemplateBinding UIElement.SnapsToDevicePixels}"
                                                       x:Name="contentPresenter"
                                                       RenderTransformOrigin=".5, .5">
                                         <ContentPresenter.RenderTransform>
                                             <RotateTransform Angle="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=(dragablz:DragablzItem.ContentRotateTransformAngle)}" />
                                         </ContentPresenter.RenderTransform>
-                                    </ContentPresenter>
+                                    </ContentPresenter>                                    
                                     <Thumb Grid.Row="0" HorizontalAlignment="Stretch" VerticalContentAlignment="Stretch" 
                                            x:Name="PART_Thumb"
                                            Style="{StaticResource MaterialDesignInvisibleThumbStyle}" />

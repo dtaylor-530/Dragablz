@@ -8,7 +8,7 @@
             <Style.Setters>
                 <Setter Property="Template">
                     <Setter.Value>
-                        <ControlTemplate>
+                        <ControlTemplate TargetType="{x:Type dragablz:DragablzItem}">
                             <Border BorderThickness="{TemplateBinding Border.BorderThickness}" Padding="{TemplateBinding Control.Padding}" BorderBrush="{TemplateBinding Border.BorderBrush}" Background="{TemplateBinding Panel.Background}" SnapsToDevicePixels="True">
                                 <Grid>
                                     <Grid.RowDefinitions>
@@ -20,7 +20,13 @@
                                         <TextBlock>DH</TextBlock>
                                     </Border>
                                     <Thumb Grid.Row="1" Width="30" Height="30" Background="Yellow" x:Name="PART_Thumb" />
-                                    <ContentPresenter Grid.Row="2" Content="{TemplateBinding ContentControl.Content}" ContentTemplate="{TemplateBinding ContentControl.ContentTemplate}" ContentStringFormat="{TemplateBinding ContentControl.ContentStringFormat}" HorizontalAlignment="{TemplateBinding Control.HorizontalContentAlignment}" VerticalAlignment="{TemplateBinding Control.VerticalContentAlignment}" SnapsToDevicePixels="{TemplateBinding UIElement.SnapsToDevicePixels}" />
+                                    <ContentPresenter Grid.Row="2"
+                                                      Content="{TemplateBinding Header}" 
+                                                      ContentTemplate="{TemplateBinding HeaderTemplate}"
+                                                      ContentStringFormat="{TemplateBinding HeaderStringFormat}" 
+                                                      HorizontalAlignment="{TemplateBinding Control.HorizontalContentAlignment}"
+                                                      VerticalAlignment="{TemplateBinding Control.VerticalContentAlignment}"
+                                                      SnapsToDevicePixels="{TemplateBinding UIElement.SnapsToDevicePixels}" />
                                 </Grid>
                             </Border>
                         </ControlTemplate>

@@ -701,7 +701,13 @@
                                     <ColumnDefinition Width="*" />
                                 </Grid.ColumnDefinitions>
                                 <Thumb Width="30" Height="30" Background="Yellow" x:Name="PART_Thumb" VerticalAlignment="Center" />
-                                <ContentPresenter Grid.Column="1" Content="{TemplateBinding ContentControl.Content}" ContentTemplate="{TemplateBinding ContentControl.ContentTemplate}" ContentStringFormat="{TemplateBinding ContentControl.ContentStringFormat}" HorizontalAlignment="{TemplateBinding Control.HorizontalContentAlignment}" VerticalAlignment="{TemplateBinding Control.VerticalContentAlignment}" SnapsToDevicePixels="{TemplateBinding UIElement.SnapsToDevicePixels}" />
+                                <ContentPresenter Grid.Column="1" 
+                                                  Content="{TemplateBinding Header}" 
+                                                  ContentTemplate="{TemplateBinding HeaderTemplate}" 
+                                                  ContentStringFormat="{TemplateBinding HeaderStringFormat}" 
+                                                  HorizontalAlignment="{TemplateBinding Control.HorizontalContentAlignment}" 
+                                                  VerticalAlignment="{TemplateBinding Control.VerticalContentAlignment}" 
+                                                  SnapsToDevicePixels="{TemplateBinding UIElement.SnapsToDevicePixels}" />
                             </Grid>
                         </Border>
                     </ControlTemplate>
@@ -925,7 +931,12 @@
                     <ControlTemplate TargetType="{x:Type local:DragablzItem}">
                         <Grid Margin="{TemplateBinding Margin}">
                             <Border BorderThickness="{TemplateBinding Border.BorderThickness}" Padding="{TemplateBinding Control.Padding}" BorderBrush="{TemplateBinding Border.BorderBrush}" Background="{TemplateBinding Panel.Background}" SnapsToDevicePixels="True">
-                                <ContentPresenter Content="{TemplateBinding ContentControl.Content}" ContentTemplate="{TemplateBinding ContentControl.ContentTemplate}" ContentStringFormat="{TemplateBinding ContentControl.ContentStringFormat}" HorizontalAlignment="{TemplateBinding Control.HorizontalContentAlignment}" VerticalAlignment="{TemplateBinding Control.VerticalContentAlignment}" SnapsToDevicePixels="{TemplateBinding UIElement.SnapsToDevicePixels}"
+                                <ContentPresenter Content="{TemplateBinding Header}" 
+                                                  ContentTemplate="{TemplateBinding HeaderTemplate}" 
+                                                  ContentStringFormat="{TemplateBinding HeaderStringFormat}" 
+                                                  HorizontalAlignment="{TemplateBinding Control.HorizontalContentAlignment}" 
+                                                  VerticalAlignment="{TemplateBinding Control.VerticalContentAlignment}" 
+                                                  SnapsToDevicePixels="{TemplateBinding UIElement.SnapsToDevicePixels}"
                                                   Margin="{TemplateBinding Control.Padding }"/>
                             </Border>
                             <Thumb Style="{StaticResource InvisibleThumbStyle}"
@@ -960,7 +971,12 @@
                             </Border>
                             <Border BorderThickness="{TemplateBinding Border.BorderThickness}" Padding="{TemplateBinding Control.Padding}" BorderBrush="{TemplateBinding Border.BorderBrush}" Background="{TemplateBinding Panel.Background}" SnapsToDevicePixels="True">
                                 <Grid Cursor="ScrollAll">
-                                    <ContentPresenter Content="{TemplateBinding ContentControl.Content}" ContentTemplate="{TemplateBinding ContentControl.ContentTemplate}" ContentStringFormat="{TemplateBinding ContentControl.ContentStringFormat}" HorizontalAlignment="{TemplateBinding Control.HorizontalContentAlignment}" VerticalAlignment="{TemplateBinding Control.VerticalContentAlignment}" SnapsToDevicePixels="{TemplateBinding UIElement.SnapsToDevicePixels}"
+                                    <ContentPresenter Content="{TemplateBinding Header}" 
+                                                      ContentTemplate="{TemplateBinding HeaderTemplate}" 
+                                                      ContentStringFormat="{TemplateBinding HeaderStringFormat}" 
+                                                      HorizontalAlignment="{TemplateBinding Control.HorizontalContentAlignment}" 
+                                                      VerticalAlignment="{TemplateBinding Control.VerticalContentAlignment}" 
+                                                      SnapsToDevicePixels="{TemplateBinding UIElement.SnapsToDevicePixels}"
                                                       Margin="{TemplateBinding Control.Padding }"/>
                                     <Thumb HorizontalAlignment="Stretch" VerticalContentAlignment="Stretch" x:Name="PART_Thumb"
                                            Style="{StaticResource InvisibleThumbStyle}"
@@ -1094,9 +1110,15 @@
                                     <ColumnDefinition Width="*" />
                                     <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
-                                <ContentPresenter Content="{TemplateBinding ContentControl.Content}" ContentTemplate="{TemplateBinding ContentControl.ContentTemplate}" ContentStringFormat="{TemplateBinding ContentControl.ContentStringFormat}" HorizontalAlignment="{TemplateBinding Control.HorizontalContentAlignment}" VerticalAlignment="{TemplateBinding Control.VerticalContentAlignment}" SnapsToDevicePixels="{TemplateBinding UIElement.SnapsToDevicePixels}"
-                                                  Margin="{TemplateBinding Control.Padding}"
-                                                  x:Name="contentPresenter" />
+                                <ContentPresenter
+                                    x:Name="contentPresenter"
+                                    Content="{TemplateBinding Header}" 
+                     ContentTemplate="{TemplateBinding HeaderTemplate}" 
+                     ContentStringFormat="{TemplateBinding HeaderStringFormat}" 
+                     HorizontalAlignment="{TemplateBinding Control.HorizontalContentAlignment}" 
+                     VerticalAlignment="{TemplateBinding Control.VerticalContentAlignment}" 
+                     SnapsToDevicePixels="{TemplateBinding UIElement.SnapsToDevicePixels}"
+                     Margin="{TemplateBinding Control.Padding }"/>
                                 <Thumb Grid.Column="0" HorizontalAlignment="Stretch" VerticalContentAlignment="Stretch" 
                                        x:Name="PART_Thumb"
                                        Style="{StaticResource InvisibleThumbStyle}" />
@@ -1146,9 +1168,16 @@
                         <Border x:Name="mainBorder" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="1,1,1,0" Background="{TemplateBinding Background}" Margin="0 0 0 1">
                             <Border x:Name="innerBorder" BorderBrush="{StaticResource TabItem.Selected.Border}" BorderThickness="1,1,1,0" Background="{StaticResource TabItem.Selected.Background}" Margin="-1" Opacity="0"/>
                         </Border>
-                        <ContentPresenter Content="{TemplateBinding ContentControl.Content}" ContentTemplate="{TemplateBinding ContentControl.ContentTemplate}" ContentStringFormat="{TemplateBinding ContentControl.ContentStringFormat}" HorizontalAlignment="{TemplateBinding Control.HorizontalContentAlignment}" VerticalAlignment="{TemplateBinding Control.VerticalContentAlignment}" SnapsToDevicePixels="{TemplateBinding UIElement.SnapsToDevicePixels}"
-                                          x:Name="contentPresenter"
-                                          Margin="{TemplateBinding Control.Padding}" />
+      
+                        <ContentPresenter
+                                    x:Name="contentPresenter"
+                            Content="{TemplateBinding Header}" 
+                     ContentTemplate="{TemplateBinding HeaderTemplate}" 
+                     ContentStringFormat="{TemplateBinding HeaderStringFormat}" 
+                     HorizontalAlignment="{TemplateBinding Control.HorizontalContentAlignment}" 
+                     VerticalAlignment="{TemplateBinding Control.VerticalContentAlignment}" 
+                     SnapsToDevicePixels="{TemplateBinding UIElement.SnapsToDevicePixels}"
+                     Margin="{TemplateBinding Control.Padding }"/>
                         <Thumb HorizontalAlignment="Stretch" VerticalContentAlignment="Stretch" x:Name="PART_Thumb"
                                Style="{StaticResource InvisibleThumbStyle}"/>
                     </Grid>
@@ -1339,9 +1368,15 @@
                         <Border x:Name="mainBorder" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="1,1,1,1" Background="{TemplateBinding Background}">
                             <Border x:Name="innerBorder" BorderBrush="{StaticResource TabItem.Selected.Border}" BorderThickness="1,1,0,1" Background="{StaticResource TabItem.Selected.Background}" Margin="-1" Opacity="0"/>
                         </Border>
-                        <ContentPresenter Content="{TemplateBinding ContentControl.Content}" ContentTemplate="{TemplateBinding ContentControl.ContentTemplate}" ContentStringFormat="{TemplateBinding ContentControl.ContentStringFormat}" HorizontalAlignment="{TemplateBinding Control.HorizontalContentAlignment}" VerticalAlignment="{TemplateBinding Control.VerticalContentAlignment}" SnapsToDevicePixels="{TemplateBinding UIElement.SnapsToDevicePixels}"
-                                          x:Name="contentPresenter"
-                                          Margin="{TemplateBinding Control.Padding}" />
+                        <ContentPresenter
+                                    x:Name="contentPresenter"
+                            Content="{TemplateBinding Header}" 
+                     ContentTemplate="{TemplateBinding HeaderTemplate}" 
+                     ContentStringFormat="{TemplateBinding HeaderStringFormat}" 
+                     HorizontalAlignment="{TemplateBinding Control.HorizontalContentAlignment}" 
+                     VerticalAlignment="{TemplateBinding Control.VerticalContentAlignment}" 
+                     SnapsToDevicePixels="{TemplateBinding UIElement.SnapsToDevicePixels}"
+                     Margin="{TemplateBinding Control.Padding }"/>
                         <Thumb HorizontalAlignment="Stretch" VerticalContentAlignment="Stretch" x:Name="PART_Thumb"
                                Style="{StaticResource InvisibleThumbStyle}"/>
                     </Grid>
