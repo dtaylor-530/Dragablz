@@ -73,6 +73,7 @@ namespace Dragablz
 #if NET40
         protected virtual void OnPropertyChanged(string propertyName)
 #else
+
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
 #endif
         {

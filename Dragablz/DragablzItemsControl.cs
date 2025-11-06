@@ -1,20 +1,16 @@
-﻿using Dragablz.Core;
-using System;
-using System.Collections;
+﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
-using System.Windows.Data;
-using System.Windows.Media;
 using System.Windows.Threading;
+using Dragablz.Core;
 
 namespace Dragablz
 {
     /// <summary>
-    /// Items control which typically uses a canvas and 
+    /// Items control which typically uses a canvas and
     /// </summary>
     public partial class DragablzItem : TreeViewItem
     {
@@ -27,10 +23,7 @@ namespace Dragablz
 
         public DragablzItem()
         {
-
         }
-
-       
 
         private void ItemContainerGeneratorOnItemsChanged(object sender, ItemsChangedEventArgs itemsChangedEventArgs)
         {
@@ -58,6 +51,7 @@ namespace Dragablz
         }
 
         #region properties
+
         public static readonly DependencyProperty FixedItemCountProperty = DependencyProperty.Register(
     "FixedItemCount", typeof(int), typeof(DragablzItem), new PropertyMetadata(default(int)));
 
@@ -66,7 +60,6 @@ namespace Dragablz
             get { return (int)GetValue(FixedItemCountProperty); }
             set { SetValue(FixedItemCountProperty, value); }
         }
-
 
         public static readonly DependencyProperty ItemsOrganiserProperty = DependencyProperty.Register(
             "ItemsOrganiser", typeof(IItemsOrganiser), typeof(DragablzItem), new PropertyMetadata(default(IItemsOrganiser)));
@@ -114,7 +107,7 @@ namespace Dragablz
             private set { SetValue(ItemsPresenterHeightPropertyKey, value); }
         }
 
-        object selection;
+        private object selection;
 
         public static readonly RoutedEvent SelectionChangedEvent =
     EventManager.RegisterRoutedEvent(
@@ -128,7 +121,6 @@ namespace Dragablz
             add { AddHandler(SelectionChangedEvent, value); }
             remove { RemoveHandler(SelectionChangedEvent, value); }
         }
-
 
         #endregion properties
 
@@ -188,18 +180,14 @@ namespace Dragablz
             return result;
         }
 
-
-
         private void Result_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            this.OnSelectionChanged(new SelectionChangedEventArgs(SelectionChangedEvent, selection != null ? [selection] : Array.Empty<object>(), new object[] {  sender }));
+            this.OnSelectionChanged(new SelectionChangedEventArgs(SelectionChangedEvent, selection != null ? [selection] : Array.Empty<object>(), new object[] { sender }));
             selection = sender;
         }
 
-
         protected virtual void OnSelectionChanged(SelectionChangedEventArgs sender)
         {
-
         }
 
         protected override void PrepareContainerForItemOverride(DependencyObject element, object item)
@@ -269,9 +257,11 @@ namespace Dragablz
                 case AddLocationHint.First:
                     sortedItems.Insert(0, dragablzItem);
                     break;
+
                 case AddLocationHint.Last:
                     sortedItems.Add(dragablzItem);
                     break;
+
                 case AddLocationHint.Prior:
                 case AddLocationHint.After:
                     if (contextDragablzItem == null)
@@ -281,6 +271,7 @@ namespace Dragablz
                     sortedItems.Insert(moveItemRequest.AddLocationHint == AddLocationHint.Prior ? contextIndex : contextIndex + 1, dragablzItem);
 
                     break;
+
                 default:
                     throw new ArgumentOutOfRangeException();
             }

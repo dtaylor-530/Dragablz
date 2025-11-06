@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using System.Windows;
 
 namespace Dragablz.Dockablz
 {
@@ -11,11 +6,11 @@ namespace Dragablz.Dockablz
 
     public class FloatRequestedEventArgs : DragablzItemEventArgs
     {
-        public FloatRequestedEventArgs(RoutedEvent routedEvent, object source, DragablzItem dragablzItem) 
+        public FloatRequestedEventArgs(RoutedEvent routedEvent, object source, DragablzItem dragablzItem)
             : base(routedEvent, source, dragablzItem)
         { }
 
-        public FloatRequestedEventArgs(RoutedEvent routedEvent, DragablzItem dragablzItem) 
+        public FloatRequestedEventArgs(RoutedEvent routedEvent, DragablzItem dragablzItem)
             : base(routedEvent, dragablzItem)
         { }
     }

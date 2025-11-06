@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -10,7 +6,7 @@ namespace Dragablz.Dockablz
 {
     /// <summary>
     /// experimentational.  might have to puish this back to mvvm only
-    /// </summary>    
+    /// </summary>
     internal class FloatingItemSnapShot
     {
         private readonly object _content;
@@ -33,8 +29,8 @@ namespace Dragablz.Dockablz
             if (dragablzItem == null) throw new ArgumentNullException("dragablzItem");
 
             return new FloatingItemSnapShot(
-                dragablzItem.Header, 
-                new Rect(dragablzItem.X, dragablzItem.Y, dragablzItem.ActualWidth, dragablzItem.ActualHeight), 
+                dragablzItem.Header,
+                new Rect(dragablzItem.X, dragablzItem.Y, dragablzItem.ActualWidth, dragablzItem.ActualHeight),
                 Panel.GetZIndex(dragablzItem),
                 Layout.GetFloatingItemState(dragablzItem));
         }

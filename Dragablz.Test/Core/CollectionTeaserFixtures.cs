@@ -1,9 +1,4 @@
-﻿using NUnit.Framework;
-using System.Collections;
-using System.Collections.Generic;
-using FakeItEasy;
-
-namespace Dragablz.Core.Tests
+﻿namespace Dragablz.Core.Tests
 {
     [TestFixture]
     public class CollectionTeaserFixture

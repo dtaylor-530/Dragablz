@@ -1,5 +1,4 @@
-﻿using NUnit.Framework;
-namespace Dragablz.Dockablz.Tests
+﻿namespace Dragablz.Dockablz.Tests
 {
     [TestFixture]
     public class TilerCalculatorFixture

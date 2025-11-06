@@ -10,7 +10,6 @@ using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Input;
-using System.Windows.Media;
 using System.Windows.Threading;
 using Dragablz.Core;
 using Dragablz.Dockablz;
@@ -18,10 +17,10 @@ using Dragablz.Referenceless;
 
 namespace Dragablz
 {
-    //original code specific to keeping visual tree "alive" sourced from http://stackoverflow.com/questions/12432062/binding-to-itemssource-of-tabcontrol-in-wpf    
+    //original code specific to keeping visual tree "alive" sourced from http://stackoverflow.com/questions/12432062/binding-to-itemssource-of-tabcontrol-in-wpf
 
     /// <summary>
-    /// Extended tab control which supports tab repositioning, and drag and drop.  Also 
+    /// Extended tab control which supports tab repositioning, and drag and drop.  Also
     /// uses the common WPF technique for pesisting the visual tree across tabs.
     /// </summary>
     [TemplatePart(Name = HeaderItemsControlPartName, Type = typeof(DragablzItem))]
@@ -32,6 +31,7 @@ namespace Dragablz
         /// Template part.
         /// </summary>
         public const string HeaderItemsControlPartName = "PART_HeaderItemsControl";
+
         /// <summary>
         /// Template part.
         /// </summary>
@@ -119,7 +119,7 @@ namespace Dragablz
         /// </summary>
         /// <remarks>
         /// Due to the organisable nature of the control, the order of items may not reflect the order in the source collection.  This method
-        /// will add items to the source collection, managing their initial appearance on screen at the same time. 
+        /// will add items to the source collection, managing their initial appearance on screen at the same time.
         /// If you are using a <see cref="InterTabController.InterTabClient"/> this will be used to add the item into the source collection.
         /// </remarks>
         /// <param name="item">New item to add.</param>
@@ -159,6 +159,7 @@ namespace Dragablz
         }
 
         #region properties
+
         public object SelectedItem
         {
             get { return (object)GetValue(SelectedItemProperty); }
@@ -168,8 +169,6 @@ namespace Dragablz
         // Using a DependencyProperty as the backing store for SelectedItem.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty SelectedItemProperty =
             DependencyProperty.Register(nameof(SelectedItem), typeof(object), typeof(TabablzControl), new PropertyMetadata());
-
-
 
         public DataTemplate SelectedItemTemplate
         {
@@ -181,8 +180,6 @@ namespace Dragablz
         public static readonly DependencyProperty SelectedItemTemplateProperty =
             DependencyProperty.Register(nameof(SelectedItemTemplate), typeof(DataTemplate), typeof(TabablzControl), new PropertyMetadata());
 
-
-
         public DataTemplateSelector SelectedItemTemplateSelector
         {
             get { return (DataTemplateSelector)GetValue(SelectedItemTemplateSelectorProperty); }
@@ -192,14 +189,11 @@ namespace Dragablz
         public static readonly DependencyProperty SelectedItemTemplateSelectorProperty =
             DependencyProperty.Register(nameof(SelectedItemTemplateSelector), typeof(DataTemplateSelector), typeof(TabablzControl), new PropertyMetadata());
 
-
-
-
         public static readonly DependencyProperty ShowDefaultCloseButtonProperty = DependencyProperty.Register(
             "ShowDefaultCloseButton", typeof(bool), typeof(TabablzControl), new PropertyMetadata(default(bool)));
 
         /// <summary>
-        /// Indicates whether a default close button should be displayed.  If manually templating the tab header content the close command 
+        /// Indicates whether a default close button should be displayed.  If manually templating the tab header content the close command
         /// can be called by executing the <see cref="TabablzControl.CloseItemCommand"/> command (typically via a <see cref="Button"/>).
         /// </summary>
         public bool ShowDefaultCloseButton
@@ -213,7 +207,7 @@ namespace Dragablz
 
         /// <summary>
         /// Indicates whether a default add button should be displayed.  Alternately an add button
-        /// could be added in <see cref="HeaderPrefixContent"/> or <see cref="HeaderSuffixContent"/>, utilising 
+        /// could be added in <see cref="HeaderPrefixContent"/> or <see cref="HeaderSuffixContent"/>, utilising
         /// <see cref="AddItemCommand"/>.
         /// </summary>
         public bool ShowDefaultAddButton
@@ -319,7 +313,6 @@ namespace Dragablz
             private set { SetValue(IsEmptyPropertyKey, value); }
         }
 
-  
         /// <summary>
         /// Raised when <see cref="IsEmpty"/> changes.
         /// </summary>
@@ -403,23 +396,21 @@ namespace Dragablz
             set { SetValue(ConsolidatingOrphanedItemCallbackProperty, value); }
         }
 
-
-
         private static readonly DependencyPropertyKey IsDraggingWindowPropertyKey =
             DependencyProperty.RegisterReadOnly(
                 "IsDraggingWindow", typeof(bool), typeof(TabablzControl),
                 new PropertyMetadata(default(bool), OnIsDraggingWindowChanged));
 
         /// <summary>
-        /// Readonly dependency property which indicates whether the owning <see cref="Window"/> 
-        /// is currently dragged 
+        /// Readonly dependency property which indicates whether the owning <see cref="Window"/>
+        /// is currently dragged
         /// </summary>
         public static readonly DependencyProperty IsDraggingWindowProperty =
             IsDraggingWindowPropertyKey.DependencyProperty;
 
         /// <summary>
-        /// Readonly dependency property which indicates whether the owning <see cref="Window"/> 
-        /// is currently dragged 
+        /// Readonly dependency property which indicates whether the owning <see cref="Window"/>
+        /// is currently dragged
         /// </summary>
         public bool IsDraggingWindow
         {
@@ -457,7 +448,6 @@ namespace Dragablz
                 RoutedEvent = IsDraggingWindowChangedEvent
             };
             instance.RaiseEvent(args);
-
         }
 
         /// <summary>
@@ -521,6 +511,7 @@ namespace Dragablz
             DependencyProperty.Register(nameof(TabStripPlacement), typeof(Dock), typeof(TabablzControl), new PropertyMetadata(Dock.Top));
 
         #endregion properties
+
         /// <summary>
         /// Adds an item to the source collection.  If the InterTabController.InterTabClient is set that instance will be deferred to.
         /// Otherwise an attempt will be made to add to the <see cref="ItemsSource" /> property, and lastly <see cref="Items"/>.
@@ -718,9 +709,11 @@ namespace Dragablz
                         selectDragablzItem = sortedDragablzItems[newIndex];
                     }
                     break;
+
                 case Key.Home:
                     selectDragablzItem = sortedDragablzItems.FirstOrDefault();
                     break;
+
                 case Key.End:
                     selectDragablzItem = sortedDragablzItems.LastOrDefault();
                     break;
@@ -813,7 +806,6 @@ namespace Dragablz
 
         private void MarkWrappedTabItems()
         {
-
             foreach (var pair in Items.OfType<TabItem>().Select(tabItem =>
                 new
                 {
@@ -917,6 +909,13 @@ namespace Dragablz
             e.Handled = true;
         }
 
+        /// <summary>
+        /// the vertical/horizontal limits for separating a tab from its container when being moved
+        /// </summary>
+        /// <param name="tc"></param>
+        /// <returns></returns>
+        public Point popTheshold(TabablzControl tc) => new(tc.ItemsPresenterWidth, tc.ItemsPresenterHeight);
+
         private bool MonitorReentry(DragablzDragDeltaEventArgs e)
         {
             var screenMousePosition = PointToScreen(Mouse.GetPosition(this));
@@ -944,12 +943,10 @@ namespace Dragablz
                     if (lastFixedItem != null)
                         topLeft.Offset(lastFixedItem.X + lastFixedItem.ActualWidth, 0);
                     var bottomRight =
-                        tc.PointToScreen(new Point(tc.ActualWidth,
-                            tc.ActualHeight));
+                        tc.PointToScreen(popTheshold(tc));
 
                     return new { tc, topLeft, bottomRight };
                 });
-
 
             var target = Native.SortWindowsTopToBottom(Application.Current.Windows.OfType<Window>())
                 .Join(otherTabablzControls, w => w, a => Window.GetWindow(a.tc), (w, a) => a)
@@ -1055,12 +1052,13 @@ namespace Dragablz
         {
             var mousePositionOnHeaderItemsControl = Mouse.GetPosition(this);
 
+            var threshold = popTheshold(this);
             Orientation? breachOrientation = null;
             if (mousePositionOnHeaderItemsControl.X < -InterTabController.HorizontalPopoutGrace
-                || (mousePositionOnHeaderItemsControl.X - ActualWidth) > InterTabController.HorizontalPopoutGrace)
+                || (mousePositionOnHeaderItemsControl.X - threshold.X) > InterTabController.HorizontalPopoutGrace)
                 breachOrientation = Orientation.Horizontal;
             else if (mousePositionOnHeaderItemsControl.Y < -InterTabController.VerticalPopoutGrace
-                     || (mousePositionOnHeaderItemsControl.Y - ActualHeight) > InterTabController.VerticalPopoutGrace)
+                     || (mousePositionOnHeaderItemsControl.Y - threshold.Y) > InterTabController.VerticalPopoutGrace)
                 breachOrientation = Orientation.Vertical;
 
             if (!breachOrientation.HasValue) return;
@@ -1360,6 +1358,7 @@ namespace Dragablz
         {
             e.CanExecute = FindOwner(e.Parameter, e.OriginalSource) != null;
         }
+
         private static void CloseItemClassHandler(object sender, ExecutedRoutedEventArgs e)
         {
             var owner = FindOwner(e.Parameter, e.OriginalSource);

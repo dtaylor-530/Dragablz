@@ -11,7 +11,7 @@ namespace Dragablz.Dockablz
 
         public override Style SelectStyle(object item, DependencyObject container)
         {
-            return container is DragablzItem { IsHeader : true } || container is HeaderedContentControl
+            return container is DragablzItem { IsHeader: true } || container is HeaderedContentControl
                 ? HeaderedStyle
                 : NonHeaderedStyle;
         }

@@ -1,6 +1,5 @@
 ﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using System.Runtime.Serialization.Formatters;
 using DragablzDemo.Annotations;
 
 namespace DragablzDemo
@@ -8,7 +7,7 @@ namespace DragablzDemo
     public class SimpleViewModel : INotifyPropertyChanged
     {
         private bool _isSelected;
-        
+
         public string Name { get; set; }
 
         public object SimpleContent { get; set; }
@@ -24,16 +23,13 @@ namespace DragablzDemo
                 OnPropertyChanged("IsSelected");
 #else
                 OnPropertyChanged();
-#endif                
+#endif
             }
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
 
         [NotifyPropertyChangedInvocator]
-#if NET40
-        protected virtual void OnPropertyChanged(string propertyName)
-#else
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
 #endif
         {

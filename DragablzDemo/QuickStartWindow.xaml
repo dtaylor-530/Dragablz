@@ -11,26 +11,25 @@
     <dockablz:Layout Partition="{StaticResource Partition}">
         <dragablz:TabablzControl Margin="8" ConsolidateOrphanedItems="True"
                                  ShowDefaultAddButton="True"
-ShowDefaultCloseButton="True"                                 >
+ShowDefaultCloseButton="True">
             <dragablz:TabablzControl.InterTabController>
                 <dragablz:InterTabController Partition="{StaticResource Partition}" />
             </dragablz:TabablzControl.InterTabController>
             <dragablz:TabablzControl.ItemTemplate>
                 <DataTemplate>
                     <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Text="{Binding }"></TextBlock>
-
                 </DataTemplate>
             </dragablz:TabablzControl.ItemTemplate>
             <dragablz:TabablzControl.SelectedItemTemplate>
                 <DataTemplate>
-                    <TextBlock HorizontalAlignment="Center" FontSize="36" 
+                    <TextBlock HorizontalAlignment="Center" FontSize="36"
                                VerticalAlignment="Center" Text="{Binding }"></TextBlock>
                 </DataTemplate>
             </dragablz:TabablzControl.SelectedItemTemplate>
             <system:String>Hello World</system:String>
             <system:String>We Have Tearable Tabs!</system:String>
             <system:String>Tab No. 3</system:String>
-            <system:String>I feel like an ice cold drink</system:String>      
+            <system:String>I feel like an ice cold drink</system:String>
         </dragablz:TabablzControl>
     </dockablz:Layout>
 </Window>

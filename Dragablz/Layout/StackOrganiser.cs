@@ -33,12 +33,14 @@ namespace Dragablz
                     _setLocation = (item, coord) => item.SetCurrentValue(DragablzItem.XProperty, coord);
                     _canvasDependencyProperty = Canvas.LeftProperty;
                     break;
+
                 case Orientation.Vertical:
                     _getDesiredSize = item => item.DesiredSize.Height;
                     _getLocation = item => item.Y;
                     _setLocation = (item, coord) => item.SetCurrentValue(DragablzItem.YProperty, coord);
                     _canvasDependencyProperty = Canvas.TopProperty;
                     break;
+
                 default:
                     throw new ArgumentOutOfRangeException("orientation");
             }
@@ -82,7 +84,7 @@ namespace Dragablz
             }
         }
 
-        #endregion
+        #endregion LocationInfo
 
         public virtual Orientation Orientation
         {
@@ -94,13 +96,13 @@ namespace Dragablz
             if (items == null) throw new ArgumentNullException("items");
 
             OrganiseInternal(
-                requestor, 
+                requestor,
                 measureBounds,
                 items.Select((di, idx) => new Tuple<int, DragablzItem>(idx, di))
                         .OrderBy(tuple => tuple,
                             MultiComparer<Tuple<int, DragablzItem>>.Ascending(tuple => _getLocation(tuple.Item2))
                                 .ThenAscending(tuple => tuple.Item1))
-                        .Select(tuple => tuple.Item2));            
+                        .Select(tuple => tuple.Item2));
         }
 
         public virtual void Organise(DragablzItem requestor, Size measureBounds, IOrderedEnumerable<DragablzItem> items)
@@ -131,11 +133,9 @@ namespace Dragablz
             }
         }
 
-
         public virtual void OrganiseOnMouseDownWithin(DragablzItem requestor, Size measureBounds,
             List<DragablzItem> siblingItems, DragablzItem dragablzItem)
         {
-
         }
 
         private IDictionary<DragablzItem, LocationInfo> _siblingItemLocationOnDragStart;
@@ -157,7 +157,7 @@ namespace Dragablz
 
             var currentLocations = siblingItems
                 .Select(GetLocationInfo)
-                .Union(new[] {GetLocationInfo(dragItem)})
+                .Union(new[] { GetLocationInfo(dragItem) })
                 .OrderBy(loc => loc.Item == dragItem ? loc.Start : _siblingItemLocationOnDragStart[loc.Item].Start);
 
             var currentCoord = 0.0;
@@ -169,7 +169,7 @@ namespace Dragablz
                     SendToLocation(location.Item, currentCoord);
                     Panel.SetZIndex(location.Item, --zIndex);
                 }
-                currentCoord += _getDesiredSize(location.Item) + _itemOffset;                
+                currentCoord += _getDesiredSize(location.Item) + _itemOffset;
             }
             Panel.SetZIndex(dragItem, int.MaxValue);
         }
@@ -180,7 +180,7 @@ namespace Dragablz
             if (siblingItems == null) throw new ArgumentNullException("siblingItems");
             var currentLocations = siblingItems
                 .Select(GetLocationInfo)
-                .Union(new[] {GetLocationInfo(dragItem)})
+                .Union(new[] { GetLocationInfo(dragItem) })
                 .OrderBy(loc => loc.Item == dragItem ? loc.Start : _siblingItemLocationOnDragStart[loc.Item].Start);
 
             var currentCoord = 0.0;
@@ -258,24 +258,24 @@ namespace Dragablz
         }
 
         private void SetLocation(DragablzItem dragablzItem, double location)
-        {                     
+        {
             _setLocation(dragablzItem, location);
         }
-        
+
         private void SendToLocation(DragablzItem dragablzItem, double location)
-        {                        
+        {
             double activeTarget;
             if (Math.Abs(_getLocation(dragablzItem) - location) < 1.0
                 ||
                 _activeStoryboardTargetLocations.TryGetValue(dragablzItem, out activeTarget)
                 && Math.Abs(activeTarget - location) < 1.0)
-            {             
+            {
                 return;
-            }            
+            }
 
             _activeStoryboardTargetLocations[dragablzItem] = location;
 
-            var storyboard = new Storyboard {FillBehavior = FillBehavior.Stop};
+            var storyboard = new Storyboard { FillBehavior = FillBehavior.Stop };
             storyboard.WhenComplete(sb =>
             {
                 _setLocation(dragablzItem, location);
@@ -290,8 +290,8 @@ namespace Dragablz
                 {
                     EasingFunction = new CubicEase() { EasingMode = EasingMode.EaseOut }
                 });
-            storyboard.Children.Add(timeline);            
-            storyboard.Begin(dragablzItem, true);            
+            storyboard.Children.Add(timeline);
+            storyboard.Begin(dragablzItem, true);
         }
 
         private LocationInfo GetLocationInfo(DragablzItem item)

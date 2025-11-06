@@ -28,7 +28,7 @@ namespace Dragablz.Core
             public int top;
             public int right;
             public int bottom;
-        }   
+        }
 
         [DllImport("user32.dll")]
         private static extern bool GetCursorPos(out POINT lpPoint);
@@ -58,11 +58,11 @@ namespace Dragablz.Core
 
         public static Point ToWpf(this Point pixelPoint)
         {
-            var desktop = GetDC(IntPtr.Zero); 
+            var desktop = GetDC(IntPtr.Zero);
             var dpi = GetDeviceCaps(desktop, 88);
             ReleaseDC(IntPtr.Zero, desktop);
 
-            var physicalUnitSize = 96d / dpi ;
+            var physicalUnitSize = 96d / dpi;
             var wpfPoint = new Point(physicalUnitSize * pixelPoint.X, physicalUnitSize * pixelPoint.Y);
 
             return wpfPoint;
@@ -74,7 +74,7 @@ namespace Dragablz.Core
             {
                 var hwndSource = PresentationSource.FromVisual(window) as HwndSource;
                 var handle = hwndSource != null ? hwndSource.Handle : IntPtr.Zero;
-                return new {window, handle};
+                return new { window, handle };
             }).Where(x => x.handle != IntPtr.Zero)
                 .ToDictionary(x => x.handle, x => x.window);
 
@@ -84,10 +84,12 @@ namespace Dragablz.Core
         }
 
         public const int SW_SHOWNORMAL = 1;
+
         [DllImport("user32.dll")]
         public static extern bool SetWindowPlacement(IntPtr hWnd, [In] ref WINDOWPLACEMENT lpwndpl);
 
         private const uint GW_HWNDNEXT = 2;
+
         [DllImport("User32")]
         public static extern IntPtr GetTopWindow(IntPtr hWnd);
 
@@ -104,13 +106,13 @@ namespace Dragablz.Core
             public POINT minPosition;
             public POINT maxPosition;
             public RECT normalPosition;
-        }        
+        }
 
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
         internal static extern IntPtr SendMessage(IntPtr hWnd, WindowMessage msg, IntPtr wParam, IntPtr lParam);
+
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
         internal static extern IntPtr PostMessage(IntPtr hWnd, WindowMessage msg, IntPtr wParam, IntPtr lParam);
-
 
         [DllImport("dwmapi.dll", EntryPoint = "#127")]
         internal static extern void DwmGetColorizationParameters(ref DWMCOLORIZATIONPARAMS dp);
@@ -126,6 +128,5 @@ namespace Dragablz.Core
             public UInt32 ColorizationGlassReflectionIntensity;
             public UInt32 ColorizationOpaqueBlend;
         }
-
     }
 }

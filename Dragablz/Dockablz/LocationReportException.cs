@@ -3,7 +3,7 @@ using System;
 namespace Dragablz.Dockablz
 {
     /// <summary>
-    /// 
+    ///
     /// </summary>
     public class LocationReportException : Exception
     {

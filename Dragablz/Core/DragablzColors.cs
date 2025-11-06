@@ -6,7 +6,7 @@ using Dragablz.Core;
 namespace Dragablz
 {
     /// <summary>
-    /// 
+    ///
     /// </summary>
     /// <remarks>
     /// In supporting .Net 4.0 we don't have access to SystemParameters.WindowGlassBrush, and even then
@@ -16,6 +16,7 @@ namespace Dragablz
     {
         //TODO listen to changes from the OS to provide updates
         public static Color WindowBaseColor = Color.FromRgb(217, 217, 217);
+
         public static Brush WindowGlassBrush = GetWindowGlassBrush();
         public static Brush WindowGlassBalancedBrush = GetBalancedWindowGlassBrush();
         public static Brush WindowInactiveBrush = GetWindowInactiveBrush();
@@ -28,7 +29,6 @@ namespace Dragablz
 
             return new SolidColorBrush(frameColor);
         }
-
 
         private static Brush GetBalancedWindowGlassBrush()
         {
@@ -68,7 +68,6 @@ namespace Dragablz
         {
             var buff = channel1 + (channel2 - channel1) * channel2Percentage / 100D;
             return Math.Min((byte)Math.Round(buff), (byte)255);
-        }   
-        
+        }
     }
 }

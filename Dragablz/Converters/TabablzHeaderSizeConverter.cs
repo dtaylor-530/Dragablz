@@ -1,10 +1,8 @@
 using System;
 using System.Globalization;
 using System.Linq;
-using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using System.Windows.Media;
 
 namespace Dragablz
 {
@@ -12,11 +10,11 @@ namespace Dragablz
     /// Provides a little help for sizing the header panel in the tab control
     /// </summary>
     public class TabablzHeaderSizeConverter : IMultiValueConverter
-    {        
+    {
         public Orientation Orientation { get; set; }
 
         /// <summary>
-        /// The first value should be the total size available size, typically the parent control size.  
+        /// The first value should be the total size available size, typically the parent control size.
         /// The second value should be from <see cref="DragablzItem.ItemsPresenterWidthProperty"/> or (height equivalent)
         /// All additional values should be siblings sizes (width or height) which will affect (reduce) the available size.
         /// </summary>

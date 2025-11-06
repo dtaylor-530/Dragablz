@@ -7,7 +7,6 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
-using System.Windows.Threading;
 using Dragablz.Core;
 using Dragablz.Dockablz;
 using Dragablz.Referenceless;
@@ -17,7 +16,7 @@ namespace Dragablz
     /// <summary>
     /// It is not necessary to use a <see cref="DragablzWindow"/> to gain tab dragging features.
     /// What this Window does is allow a quick way to remove the Window border, and support transparency whilst
-    /// dragging.  
+    /// dragging.
     /// </summary>
     [TemplatePart(Name = WindowSurfaceGridPartName, Type = typeof(Grid))]
     [TemplatePart(Name = WindowRestoreThumbPartName, Type = typeof(Thumb))]
@@ -32,7 +31,7 @@ namespace Dragablz
         public static RoutedCommand CloseWindowCommand = new RoutedCommand();
         public static RoutedCommand RestoreWindowCommand = new RoutedCommand();
         public static RoutedCommand MaximizeWindowCommand = new RoutedCommand();
-        public static RoutedCommand MinimizeWindowCommand = new RoutedCommand();        
+        public static RoutedCommand MinimizeWindowCommand = new RoutedCommand();
 
         private const int ResizeMargin = 4;
         private Size _sizeWhenResizeBegan;
@@ -51,7 +50,7 @@ namespace Dragablz
 
         static DragablzWindow()
         {
-            DefaultStyleKeyProperty.OverrideMetadata(typeof(DragablzWindow), new FrameworkPropertyMetadata(typeof(DragablzWindow)));            
+            DefaultStyleKeyProperty.OverrideMetadata(typeof(DragablzWindow), new FrameworkPropertyMetadata(typeof(DragablzWindow)));
         }
 
         public DragablzWindow()
@@ -61,12 +60,12 @@ namespace Dragablz
             CommandBindings.Add(new CommandBinding(CloseWindowCommand, CloseWindowExecuted));
             CommandBindings.Add(new CommandBinding(MaximizeWindowCommand, MaximizeWindowExecuted));
             CommandBindings.Add(new CommandBinding(MinimizeWindowCommand, MinimizeWindowExecuted));
-            CommandBindings.Add(new CommandBinding(RestoreWindowCommand, RestoreWindowExecuted));                        
+            CommandBindings.Add(new CommandBinding(RestoreWindowCommand, RestoreWindowExecuted));
         }
 
         private static readonly DependencyPropertyKey IsWindowBeingDraggedByTabPropertyKey =
             DependencyProperty.RegisterReadOnly(
-                "IsBeingDraggedByTab", typeof (bool), typeof (DragablzWindow),
+                "IsBeingDraggedByTab", typeof(bool), typeof(DragablzWindow),
                 new PropertyMetadata(default(bool)));
 
         public static readonly DependencyProperty IsBeingDraggedByTabProperty =
@@ -74,12 +73,12 @@ namespace Dragablz
 
         public bool IsBeingDraggedByTab
         {
-            get { return (bool) GetValue(IsBeingDraggedByTabProperty); }
+            get { return (bool)GetValue(IsBeingDraggedByTabProperty); }
             private set { SetValue(IsWindowBeingDraggedByTabPropertyKey, value); }
-        }        
+        }
 
         private void ItemDragCompleted(object sender, DragablzDragCompletedEventArgs e)
-        {            
+        {
             IsBeingDraggedByTab = false;
         }
 
@@ -141,7 +140,7 @@ namespace Dragablz
 
             if (windowResizeThumb == null) return;
 
-            windowResizeThumb.MouseMove += WindowResizeThumbOnMouseMove;                
+            windowResizeThumb.MouseMove += WindowResizeThumbOnMouseMove;
             windowResizeThumb.DragStarted += WindowResizeThumbOnDragStarted;
             windowResizeThumb.DragDelta += WindowResizeThumbOnDragDelta;
             windowResizeThumb.DragCompleted += WindowResizeThumbOnDragCompleted;
@@ -154,7 +153,7 @@ namespace Dragablz
             {
                 var outerRectangleGeometry = new RectangleGeometry(new Rect(sizeInfo.NewSize));
                 var innerRectangleGeometry =
-                    new RectangleGeometry(new Rect(ResizeMargin, ResizeMargin, sizeInfo.NewSize.Width - ResizeMargin * 2, sizeInfo.NewSize.Height - ResizeMargin*2));
+                    new RectangleGeometry(new Rect(ResizeMargin, ResizeMargin, sizeInfo.NewSize.Width - ResizeMargin * 2, sizeInfo.NewSize.Height - ResizeMargin * 2));
                 resizeThumb.Clip = new CombinedGeometry(GeometryCombineMode.Exclude, outerRectangleGeometry,
                     innerRectangleGeometry);
             }
@@ -166,9 +165,9 @@ namespace Dragablz
         {
             get
             {
-                var value = typeof (Window).GetProperty("CriticalHandle", BindingFlags.NonPublic | BindingFlags.Instance)
+                var value = typeof(Window).GetProperty("CriticalHandle", BindingFlags.NonPublic | BindingFlags.Instance)
                     .GetValue(this, new object[0]);
-                return (IntPtr) value;
+                return (IntPtr)value;
             }
         }
 
@@ -189,8 +188,8 @@ namespace Dragablz
         }
 
         private void WindowRestoreThumbOnMouseDoubleClick(object sender, MouseButtonEventArgs mouseButtonEventArgs)
-        {            
-            WindowState = WindowState.Normal;            
+        {
+            WindowState = WindowState.Normal;
         }
 
         private void WindowResizeThumbOnDragCompleted(object sender, DragCompletedEventArgs dragCompletedEventArgs)
@@ -232,14 +231,14 @@ namespace Dragablz
             if (_bottomMode.Contains(_resizeType))
             {
                 var diff = currentScreenMousePoint.Y - _screenMousePointWhenResizeBegan.Y;
-                diff /= _yScale; 
+                diff /= _yScale;
                 height += diff;
             }
 
             width = Math.Max(MinWidth, width);
-            height = Math.Max(MinHeight, height);   
+            height = Math.Max(MinHeight, height);
             //TODO must try harder.
-            left = Math.Min(left, _windowLocationPointWhenResizeBegan.X + _sizeWhenResizeBegan.Width - ResizeMargin*4);
+            left = Math.Min(left, _windowLocationPointWhenResizeBegan.X + _sizeWhenResizeBegan.Width - ResizeMargin * 4);
             //TODO must try harder.
             top = Math.Min(top, _windowLocationPointWhenResizeBegan.Y + _sizeWhenResizeBegan.Height - ResizeMargin * 4);
             SetCurrentValue(WidthProperty, width);
@@ -304,23 +303,31 @@ namespace Dragablz
         private static Cursor SelectCursor(SizeGrip sizeGrip)
         {
             switch (sizeGrip)
-            {                
+            {
                 case SizeGrip.Left:
                     return Cursors.SizeWE;
+
                 case SizeGrip.TopLeft:
                     return Cursors.SizeNWSE;
+
                 case SizeGrip.Top:
                     return Cursors.SizeNS;
+
                 case SizeGrip.TopRight:
                     return Cursors.SizeNESW;
+
                 case SizeGrip.Right:
                     return Cursors.SizeWE;
+
                 case SizeGrip.BottomRight:
                     return Cursors.SizeNWSE;
+
                 case SizeGrip.Bottom:
                     return Cursors.SizeNS;
+
                 case SizeGrip.BottomLeft:
                     return Cursors.SizeNESW;
+
                 default:
                     return Cursors.Arrow;
             }
@@ -339,12 +346,12 @@ namespace Dragablz
 
             Top = cursorPos.Y / _yScale - 2;
             Left = cursorPos.X / _xScale - RestoreBounds.Width / 2;
-            
+
             var lParam = (int)(uint)cursorPos.X | (cursorPos.Y << 16);
             Native.SendMessage(CriticalHandle, WindowMessage.WM_LBUTTONUP, (IntPtr)HitTest.HT_CAPTION,
                 (IntPtr)lParam);
             Native.SendMessage(CriticalHandle, WindowMessage.WM_SYSCOMMAND, (IntPtr)SystemCommand.SC_MOUSEMOVE,
-                IntPtr.Zero);            
+                IntPtr.Zero);
         }
 
         private void RestoreWindowExecuted(object sender, ExecutedRoutedEventArgs e)
@@ -365,6 +372,6 @@ namespace Dragablz
         private void CloseWindowExecuted(object sender, ExecutedRoutedEventArgs executedRoutedEventArgs)
         {
             Native.PostMessage(new WindowInteropHelper(this).Handle, WindowMessage.WM_CLOSE, IntPtr.Zero, IntPtr.Zero);
-        }             
+        }
     }
 }

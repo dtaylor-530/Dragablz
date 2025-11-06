@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Reflection;
 #endif
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,7 +18,7 @@ namespace Dragablz.Core
         {
 #if NET40
             var fieldInfo = typeof(ItemContainerGenerator).GetField("_items", BindingFlags.NonPublic | BindingFlags.Instance);
-            var list = (IList)fieldInfo.GetValue(itemsControl.ItemContainerGenerator);            
+            var list = (IList)fieldInfo.GetValue(itemsControl.ItemContainerGenerator);
             for (var i = 0; i < list.Count; i++)
 #else
             for (var i = 0; i < itemsControl.ItemContainerGenerator.Items.Count; i++)
@@ -122,6 +123,5 @@ namespace Dragablz.Core
 
             return window.Top;
         }
-
     }
 }

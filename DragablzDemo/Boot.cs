@@ -1,16 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
-using System.Windows.Documents;
-using System.Windows.Interop;
-using System.Windows.Media;
-using Dragablz;
 
 namespace DragablzDemo
 {
@@ -19,7 +8,7 @@ namespace DragablzDemo
         [STAThread]
         public static void Main(string[] args)
         {
-            var app = new App {ShutdownMode = ShutdownMode.OnLastWindowClose};
+            var app = new App { ShutdownMode = ShutdownMode.OnLastWindowClose };
             app.InitializeComponent();
 
             new QuickStartWindow().Show();
@@ -52,7 +41,7 @@ namespace DragablzDemo
             //    //new HeaderedItemViewModel { Header = "Thu", Content = "Thursday's child has far to go" },
             //    //new HeaderedItemViewModel { Header = "Fri", Content = "Friday's child loving and giving" }//,
             //    //new HeaderedItemViewModel { Header = "Sat", Content = "Saturday's child works hard for a living" },
-            //    //new HeaderedItemViewModel { Header = "Sun", Content = "Sunday's child is awkwardly not fitting into this demo" }                 
+            //    //new HeaderedItemViewModel { Header = "Sun", Content = "Sunday's child is awkwardly not fitting into this demo" }
             //);
             //boundExampleModel.ToolItems.Add(
             //    new HeaderedItemViewModel {Header = "January", Content = "Welcome to the January tool/float item."});
@@ -77,6 +66,4 @@ namespace DragablzDemo
             app.Run();
         }
     }
-
-    
 }

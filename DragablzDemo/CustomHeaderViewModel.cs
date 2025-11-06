@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
+﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 using DragablzDemo.Annotations;
 
 namespace DragablzDemo
@@ -25,7 +20,7 @@ namespace DragablzDemo
                 OnPropertyChanged("Header");
 #else
                 OnPropertyChanged();
-#endif                
+#endif
             }
         }
 
@@ -40,16 +35,13 @@ namespace DragablzDemo
                 OnPropertyChanged("IsSelected");
 #else
                 OnPropertyChanged();
-#endif                
+#endif
             }
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
 
         [NotifyPropertyChangedInvocator]
-#if NET40
-        protected virtual void OnPropertyChanged(string propertyName)
-#else
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
 #endif
         {

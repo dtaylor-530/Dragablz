@@ -1,4 +1,3 @@
-using System.Threading;
 using System.Windows;
 
 namespace Dragablz
@@ -16,6 +15,7 @@ namespace Dragablz
         /// <param name="source">The source control where a dragging operation was initiated.</param>
         /// <returns></returns>
         INewTabHost<Window> GetNewHost(IInterTabClient interTabClient, object partition, TabablzControl source);
+
         /// <summary>
         /// Called when a tab has been emptied, and thus typically a window needs closing.
         /// </summary>

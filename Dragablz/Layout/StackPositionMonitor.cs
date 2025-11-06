@@ -20,9 +20,11 @@ namespace Dragablz
                 case Orientation.Horizontal:
                     _getLocation = item => item.X;
                     break;
+
                 case Orientation.Vertical:
                     _getLocation = item => item.Y;
                     break;
+
                 default:
                     throw new ArgumentOutOfRangeException("orientation");
             }

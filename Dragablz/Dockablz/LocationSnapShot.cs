@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Windows;
-using System.Windows.Navigation;
 
 namespace Dragablz.Dockablz
 {
@@ -17,7 +16,7 @@ namespace Dragablz.Dockablz
         public static LocationSnapShot Take(FrameworkElement frameworkElement)
         {
             if (frameworkElement == null) throw new ArgumentNullException("frameworkElement");
-            
+
             return new LocationSnapShot(frameworkElement.Width, frameworkElement.Height);
         }
 
@@ -30,7 +29,7 @@ namespace Dragablz.Dockablz
         public void Apply(FrameworkElement frameworkElement)
         {
             if (frameworkElement == null) throw new ArgumentNullException("frameworkElement");
-            
+
             frameworkElement.SetCurrentValue(FrameworkElement.WidthProperty, _width);
             frameworkElement.SetCurrentValue(FrameworkElement.HeightProperty, _height);
         }
