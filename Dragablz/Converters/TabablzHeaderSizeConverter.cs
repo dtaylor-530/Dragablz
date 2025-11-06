@@ -17,7 +17,7 @@ namespace Dragablz
 
         /// <summary>
         /// The first value should be the total size available size, typically the parent control size.  
-        /// The second value should be from <see cref="DragablzItemsControl.ItemsPresenterWidthProperty"/> or (height equivalent)
+        /// The second value should be from <see cref="DragablzItem.ItemsPresenterWidthProperty"/> or (height equivalent)
         /// All additional values should be siblings sizes (width or height) which will affect (reduce) the available size.
         /// </summary>
         /// <param name="values"></param>

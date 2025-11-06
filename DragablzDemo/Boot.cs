@@ -33,7 +33,7 @@ namespace DragablzDemo
             //    new HeaderedItemViewModel
             //    {
             //        Header = "Fixed",
-            //        Content = "There is a dragablz:DragablzItemsControl.FixedItemCount of 1, so this header is fixed!"
+            //        Content = "There is a dragablz:DragablzItem.FixedItemCount of 1, so this header is fixed!"
             //    },
             //    new HeaderedItemViewModel {Header = "MDI Demo", Content = new MdiExample()},
             //    new HeaderedItemViewModel

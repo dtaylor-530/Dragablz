@@ -16,26 +16,21 @@ namespace Dragablz
     /// <summary>
     /// Items control which typically uses a canvas and 
     /// </summary>
-    public class DragablzItemsControl : TreeViewItem
+    public partial class DragablzItem : TreeViewItem
     {
         private object[] _previousSortQueryResult;
 
-        static DragablzItemsControl()
+        static DragablzItem()
         {
-            DefaultStyleKeyProperty.OverrideMetadata(typeof(DragablzItemsControl), new FrameworkPropertyMetadata(typeof(DragablzItemsControl)));
+            DefaultStyleKeyProperty.OverrideMetadata(typeof(DragablzItem), new FrameworkPropertyMetadata(typeof(DragablzItem)));
         }
 
-        public DragablzItemsControl()
+        public DragablzItem()
         {
-            ItemContainerGenerator.StatusChanged += ItemContainerGeneratorOnStatusChanged;
-            ItemContainerGenerator.ItemsChanged += ItemContainerGeneratorOnItemsChanged;
-            AddHandler(DragablzItem.XChangedEvent, new RoutedPropertyChangedEventHandler<double>(ItemXChanged));
-            AddHandler(DragablzItem.YChangedEvent, new RoutedPropertyChangedEventHandler<double>(ItemYChanged));
-            AddHandler(DragablzItem.DragDelta, new DragablzDragDeltaEventHandler(ItemDragDelta));
-            AddHandler(DragablzItem.DragCompleted, new DragablzDragCompletedEventHandler(ItemDragCompleted));
-            AddHandler(DragablzItem.DragStarted, new DragablzDragStartedEventHandler(ItemDragStarted));
-            AddHandler(DragablzItem.MouseDownWithinEvent, new DragablzItemEventHandler(ItemMouseDownWithinHandlerTarget));
+
         }
+
+       
 
         private void ItemContainerGeneratorOnItemsChanged(object sender, ItemsChangedEventArgs itemsChangedEventArgs)
         {
@@ -64,7 +59,7 @@ namespace Dragablz
 
         #region properties
         public static readonly DependencyProperty FixedItemCountProperty = DependencyProperty.Register(
-    "FixedItemCount", typeof(int), typeof(DragablzItemsControl), new PropertyMetadata(default(int)));
+    "FixedItemCount", typeof(int), typeof(DragablzItem), new PropertyMetadata(default(int)));
 
         public int FixedItemCount
         {
@@ -74,7 +69,7 @@ namespace Dragablz
 
 
         public static readonly DependencyProperty ItemsOrganiserProperty = DependencyProperty.Register(
-            "ItemsOrganiser", typeof(IItemsOrganiser), typeof(DragablzItemsControl), new PropertyMetadata(default(IItemsOrganiser)));
+            "ItemsOrganiser", typeof(IItemsOrganiser), typeof(DragablzItem), new PropertyMetadata(default(IItemsOrganiser)));
 
         public IItemsOrganiser ItemsOrganiser
         {
@@ -83,7 +78,7 @@ namespace Dragablz
         }
 
         public static readonly DependencyProperty PositionMonitorProperty = DependencyProperty.Register(
-            "PositionMonitor", typeof(PositionMonitor), typeof(DragablzItemsControl), new PropertyMetadata(default(PositionMonitor)));
+            "PositionMonitor", typeof(PositionMonitor), typeof(DragablzItem), new PropertyMetadata(default(PositionMonitor)));
 
         public PositionMonitor PositionMonitor
         {
@@ -93,7 +88,7 @@ namespace Dragablz
 
         private static readonly DependencyPropertyKey ItemsPresenterWidthPropertyKey =
             DependencyProperty.RegisterReadOnly(
-                "ItemsPresenterWidth", typeof(double), typeof(DragablzItemsControl),
+                "ItemsPresenterWidth", typeof(double), typeof(DragablzItem),
                 new PropertyMetadata(default(double)));
 
         public static readonly DependencyProperty ItemsPresenterWidthProperty =
@@ -107,7 +102,7 @@ namespace Dragablz
 
         private static readonly DependencyPropertyKey ItemsPresenterHeightPropertyKey =
             DependencyProperty.RegisterReadOnly(
-                "ItemsPresenterHeight", typeof(double), typeof(DragablzItemsControl),
+                "ItemsPresenterHeight", typeof(double), typeof(DragablzItem),
                 new PropertyMetadata(default(double)));
 
         public static readonly DependencyProperty ItemsPresenterHeightProperty =
@@ -126,7 +121,7 @@ namespace Dragablz
         nameof(SelectionChanged),
         RoutingStrategy.Bubble,
         typeof(SelectionChangedEventHandler),
-        typeof(DragablzItemsControl));
+        typeof(DragablzItem));
 
         public event SelectionChangedEventHandler SelectionChanged
         {
@@ -312,8 +307,8 @@ namespace Dragablz
                     DragablzItems().Except(new[] { eventArgs.DragablzItem }).ToList(),
                     eventArgs.DragablzItem);
             }
-
-            eventArgs.Handled = true;
+            //if(eventArgs.)
+            //eventArgs.Handled = true;
 
             Dispatcher.BeginInvoke(new Action(InvalidateMeasure), DispatcherPriority.Loaded);
         }
@@ -337,7 +332,7 @@ namespace Dragablz
                     eventArgs.DragablzItem);
             }
 
-            eventArgs.Handled = true;
+            //eventArgs.Handled = true;
 
             //wowsers
             Dispatcher.BeginInvoke(new Action(InvalidateMeasure));
@@ -384,7 +379,7 @@ namespace Dragablz
 
             eventArgs.DragablzItem.BringIntoView();
 
-            eventArgs.Handled = true;
+            //eventArgs.Handled = true;
         }
 
         private void ItemXChanged(object sender, RoutedPropertyChangedEventArgs<double> routedPropertyChangedEventArgs)

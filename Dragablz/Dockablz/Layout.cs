@@ -43,7 +43,7 @@ namespace Dragablz.Dockablz
         public static RoutedCommand TileFloatingItemsVerticallyCommand = new RoutedCommand();
         public static RoutedCommand TileFloatingItemsHorizontallyCommand = new RoutedCommand();
         
-        private readonly DragablzItemsControl _floatingItems;
+        private readonly DragablzItem _floatingItems;
         private static bool _isDragOpWireUpPending;
         private FloatTransfer _floatTransfer;
 
@@ -75,7 +75,7 @@ namespace Dragablz.Dockablz
             CommandBindings.Add(new CommandBinding(TileFloatingItemsHorizontallyCommand, TileFloatingItemsHorizontallyExecuted));                        
 
             //TODO bad bad behaviour.  Pick up this from the template.
-            _floatingItems = new DragablzItemsControl
+            _floatingItems = new DragablzItem
             {
                 ContainerCustomisations = new ContainerCustomisations(
                     GetFloatingContainerForItemOverride,
@@ -290,7 +290,7 @@ namespace Dragablz.Dockablz
             "FloatingItemsControlStyle", typeof (Style), typeof (Layout), new PropertyMetadata((Style)null));
 
         /// <summary>
-        /// The style to be applied to the <see cref="DragablzItemsControl"/> which is used to display floating items.
+        /// The style to be applied to the <see cref="DragablzItem"/> which is used to display floating items.
         /// In most scenarios it should be OK to leave this to that applied by the default style.
         /// </summary>
         public Style FloatingItemsControlStyle
@@ -441,16 +441,16 @@ namespace Dragablz.Dockablz
             _isDragOpWireUpPending = true;            
         }
 
-        private static void SetupParticipatingLayouts(DragablzItem dragablzItem)
+        private static void SetupParticipatingLayouts(DragablzItem DragablzItem)
         {
-            var sourceOfDragItemsControl = ItemsControl.ItemsControlFromItemContainer(dragablzItem) as DragablzItemsControl;
+            var sourceOfDragItemsControl = ItemsControl.ItemsControlFromItemContainer(DragablzItem) as DragablzItem;
             if (sourceOfDragItemsControl == null || sourceOfDragItemsControl.Items.Count != 1) return;
 
-            var draggingWindow = Window.GetWindow(dragablzItem);
+            var draggingWindow = Window.GetWindow(DragablzItem);
             if (draggingWindow == null) return;
 
             foreach (var loadedLayout in LoadedLayouts.Where(l =>
-                l.Partition == dragablzItem.PartitionAtDragStart &&
+                l.Partition == DragablzItem.PartitionAtDragStart &&
                 !Equals(Window.GetWindow(l), draggingWindow)))
 
             {
@@ -485,9 +485,9 @@ namespace Dragablz.Dockablz
             }
         }
 
-        private static bool TryGetSourceTabControl(DragablzItem dragablzItem, out TabablzControl tabablzControl)
+        private static bool TryGetSourceTabControl(DragablzItem DragablzItem, out TabablzControl tabablzControl)
         {
-            var sourceOfDragItemsControl = ItemsControl.ItemsControlFromItemContainer(dragablzItem) as DragablzItemsControl;
+            var sourceOfDragItemsControl = ItemsControl.ItemsControlFromItemContainer(DragablzItem) as DragablzItem;
             if (sourceOfDragItemsControl == null) throw new ApplicationException("Unable to determine source items control.");
 
             tabablzControl = TabablzControl.GetOwnerOfHeaderItems(sourceOfDragItemsControl);
@@ -500,7 +500,7 @@ namespace Dragablz.Dockablz
             if (InterLayoutClient == null)
                 throw new InvalidOperationException("InterLayoutClient is not set.");            
 
-            var sourceOfDragItemsControl = ItemsControl.ItemsControlFromItemContainer(sourceDragablzItem) as DragablzItemsControl;
+            var sourceOfDragItemsControl = ItemsControl.ItemsControlFromItemContainer(sourceDragablzItem) as DragablzItem;
             if (sourceOfDragItemsControl == null) throw new ApplicationException("Unable to determin source items control.");
             
             var sourceTabControl = TabablzControl.GetOwnerOfHeaderItems(sourceOfDragItemsControl);
@@ -687,21 +687,21 @@ namespace Dragablz.Dockablz
             _currentlyOfferedDropZone = null;
         }
 
-        private static void Float(Layout layout, DragablzItem dragablzItem)
+        private static void Float(Layout layout, DragablzItem DragablzItem)
         {
             //TODO we need eq of IManualInterTabClient here, so consumer can control this op'.            
 
             //remove from source
-            var sourceOfDragItemsControl = ItemsControl.ItemsControlFromItemContainer(dragablzItem) as DragablzItemsControl;
+            var sourceOfDragItemsControl = ItemsControl.ItemsControlFromItemContainer(DragablzItem) as DragablzItem;
             if (sourceOfDragItemsControl == null) throw new ApplicationException("Unable to determin source items control.");            
             var sourceTabControl = TabablzControl.GetOwnerOfHeaderItems(sourceOfDragItemsControl);
-            layout._floatTransfer = FloatTransfer.TakeSnapshot(dragablzItem, sourceTabControl);
+            layout._floatTransfer = FloatTransfer.TakeSnapshot(DragablzItem, sourceTabControl);
             var floatingItemSnapShots = sourceTabControl.VisualTreeDepthFirstTraversal()
                     .OfType<Layout>()
                     .SelectMany(l => l.FloatingDragablzItems().Select(FloatingItemSnapShot.Take))
                     .ToList();
             if (sourceTabControl == null) throw new ApplicationException("Unable to determin source tab control.");            
-            sourceTabControl.RemoveItem(dragablzItem);
+            sourceTabControl.RemoveItem(DragablzItem);
             
             //add to float layer            
             CollectionTeaser collectionTeaser;
@@ -781,20 +781,20 @@ namespace Dragablz.Dockablz
 
         private void TileFloatingItemsExecuted(object sender, ExecutedRoutedEventArgs executedRoutedEventArgs)
         {
-            var dragablzItems = _floatingItems.DragablzItems();
-            Tiler.Tile(dragablzItems, new Size(_floatingItems.ActualWidth, _floatingItems.ActualHeight));
+            var DragablzItems = _floatingItems.DragablzItems();
+            Tiler.Tile(DragablzItems, new Size(_floatingItems.ActualWidth, _floatingItems.ActualHeight));
         }
 
         private void TileFloatingItemsHorizontallyExecuted(object sender, ExecutedRoutedEventArgs e)
         {
-            var dragablzItems = _floatingItems.DragablzItems();
-            Tiler.TileHorizontally(dragablzItems, new Size(_floatingItems.ActualWidth, _floatingItems.ActualHeight));
+            var DragablzItems = _floatingItems.DragablzItems();
+            Tiler.TileHorizontally(DragablzItems, new Size(_floatingItems.ActualWidth, _floatingItems.ActualHeight));
         }
 
         private void TileFloatingItemsVerticallyExecuted(object sender, ExecutedRoutedEventArgs e)
         {
-            var dragablzItems = _floatingItems.DragablzItems();
-            Tiler.TileVertically(dragablzItems, new Size(_floatingItems.ActualWidth, _floatingItems.ActualHeight));
+            var DragablzItems = _floatingItems.DragablzItems();
+            Tiler.TileVertically(DragablzItems, new Size(_floatingItems.ActualWidth, _floatingItems.ActualHeight));
         }
 
         public static readonly DependencyProperty FloatingItemStateProperty = DependencyProperty.RegisterAttached(
@@ -828,10 +828,10 @@ namespace Dragablz.Dockablz
             canExecuteRoutedEventArgs.CanExecute = false;
             canExecuteRoutedEventArgs.Handled = true;
 
-            var dragablzItem = canExecuteRoutedEventArgs.Parameter as DragablzItem;
-            if (dragablzItem != null)
+            var DragablzItem = canExecuteRoutedEventArgs.Parameter as DragablzItem;
+            if (DragablzItem != null)
             {
-                canExecuteRoutedEventArgs.CanExecute = new[] {WindowState.Normal, WindowState.Minimized}.Contains(GetFloatingItemState(dragablzItem));
+                canExecuteRoutedEventArgs.CanExecute = new[] {WindowState.Normal, WindowState.Minimized}.Contains(GetFloatingItemState(DragablzItem));
             }
         }
 
@@ -840,10 +840,10 @@ namespace Dragablz.Dockablz
             canExecuteRoutedEventArgs.CanExecute = false;
             canExecuteRoutedEventArgs.Handled = true;
 
-            var dragablzItem = canExecuteRoutedEventArgs.Parameter as DragablzItem;
-            if (dragablzItem != null)
+            var DragablzItem = canExecuteRoutedEventArgs.Parameter as DragablzItem;
+            if (DragablzItem != null)
             {
-                canExecuteRoutedEventArgs.CanExecute = new[] { WindowState.Maximized, WindowState.Minimized }.Contains(GetFloatingItemState(dragablzItem));
+                canExecuteRoutedEventArgs.CanExecute = new[] { WindowState.Maximized, WindowState.Minimized }.Contains(GetFloatingItemState(DragablzItem));
             }
         }
 
@@ -855,13 +855,13 @@ namespace Dragablz.Dockablz
 
         private void CloseFloatingItemExecuted(object sender, ExecutedRoutedEventArgs executedRoutedEventArgs)
         {
-            var dragablzItem = executedRoutedEventArgs.Parameter as DragablzItem;
-            if (dragablzItem == null) throw new ApplicationException("Parameter must be a DragablzItem");
+            var DragablzItem = executedRoutedEventArgs.Parameter as DragablzItem;
+            if (DragablzItem == null) throw new ApplicationException("Parameter must be a DragablzItem");
 
             var cancel = false;
             if (ClosingFloatingItemCallback != null)
             {
-                var callbackArgs = new ItemActionCallbackArgs<Layout>(Window.GetWindow(this), this, dragablzItem);
+                var callbackArgs = new ItemActionCallbackArgs<Layout>(Window.GetWindow(this), this, DragablzItem);
                 ClosingFloatingItemCallback(callbackArgs);
                 cancel = callbackArgs.IsCancelled;
             }
@@ -870,7 +870,7 @@ namespace Dragablz.Dockablz
 
             //TODO ...need a similar tp manual inter tab controlller here for the extra hook
 
-            var item = _floatingItems.ItemContainerGenerator.ItemFromContainer(dragablzItem);
+            var item = _floatingItems.ItemContainerGenerator.ItemFromContainer(DragablzItem);
 
             CollectionTeaser collectionTeaser;
             if (CollectionTeaser.TryCreate(_floatingItems.ItemsSource, out collectionTeaser))
@@ -881,22 +881,22 @@ namespace Dragablz.Dockablz
 
         private static void MaximiseFloatingItemExecuted(object sender, ExecutedRoutedEventArgs e)
         {
-            var dragablzItem = e.Parameter as DragablzItem;
-            if (dragablzItem == null) return;
+            var DragablzItem = e.Parameter as DragablzItem;
+            if (DragablzItem == null) return;
             
-            SetLocationSnapShot(dragablzItem, LocationSnapShot.Take(dragablzItem));
-            SetFloatingItemState(dragablzItem, WindowState.Maximized);
+            SetLocationSnapShot(DragablzItem, LocationSnapShot.Take(DragablzItem));
+            SetFloatingItemState(DragablzItem, WindowState.Maximized);
         }
 
         private static void RestoreFloatingItemExecuted(object sender, ExecutedRoutedEventArgs e)
         {
-            var dragablzItem = e.Parameter as DragablzItem;
-            if (dragablzItem == null) return;
+            var DragablzItem = e.Parameter as DragablzItem;
+            if (DragablzItem == null) return;
             
-            SetFloatingItemState(dragablzItem, WindowState.Normal);
-            var locationSnapShot = GetLocationSnapShot(dragablzItem);
+            SetFloatingItemState(DragablzItem, WindowState.Normal);
+            var locationSnapShot = GetLocationSnapShot(DragablzItem);
             if (locationSnapShot != null)
-                locationSnapShot.Apply(dragablzItem);            
+                locationSnapShot.Apply(DragablzItem);            
         }
 
         private bool IsHostingTab()
@@ -935,8 +935,8 @@ namespace Dragablz.Dockablz
 
         private void UnfloatExecuted(object sender, ExecutedRoutedEventArgs executedRoutedEventArgs)
         {
-            var dragablzItem = executedRoutedEventArgs.Parameter as DragablzItem;
-            if (dragablzItem == null) return;
+            var DragablzItem = executedRoutedEventArgs.Parameter as DragablzItem;
+            if (DragablzItem == null) return;
             
             var exemplarTabControl = this.VisualTreeDepthFirstTraversal().OfType<TabablzControl>()
                 .FirstOrDefault(t => t.InterTabController != null && t.InterTabController.Partition == Partition);                
@@ -949,12 +949,12 @@ namespace Dragablz.Dockablz
             if (newTabHost == null || newTabHost.TabablzControl == null || newTabHost.Container == null)
                 throw new ApplicationException("New tab host was not correctly provided");
 
-            var floatingItemSnapShots = dragablzItem.VisualTreeDepthFirstTraversal()
+            var floatingItemSnapShots = DragablzItem.VisualTreeDepthFirstTraversal()
                     .OfType<Layout>()
                     .SelectMany(l => l.FloatingDragablzItems().Select(FloatingItemSnapShot.Take))
                     .ToList();
 
-            var content = dragablzItem.Header ?? dragablzItem;
+            var content = DragablzItem.Header ?? DragablzItem;
 
             //remove from source
             CollectionTeaser collectionTeaser;

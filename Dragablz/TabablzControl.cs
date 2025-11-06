@@ -24,9 +24,9 @@ namespace Dragablz
     /// Extended tab control which supports tab repositioning, and drag and drop.  Also 
     /// uses the common WPF technique for pesisting the visual tree across tabs.
     /// </summary>
-    [TemplatePart(Name = HeaderItemsControlPartName, Type = typeof(DragablzItemsControl))]
+    [TemplatePart(Name = HeaderItemsControlPartName, Type = typeof(DragablzItem))]
     [TemplatePart(Name = ItemsHolderPartName, Type = typeof(Panel))]
-    public class TabablzControl : DragablzItemsControl
+    public class TabablzControl : DragablzItem
     {
         /// <summary>
         /// Template part.
@@ -747,7 +747,7 @@ namespace Dragablz
             return new FrameworkElementAutomationPeer(this);
         }
 
-        internal static TabablzControl GetOwnerOfHeaderItems(DragablzItemsControl itemsControl)
+        internal static TabablzControl GetOwnerOfHeaderItems(DragablzItem itemsControl)
         {
             return LoadedInstances.FirstOrDefault(t => Equals(t, itemsControl));
         }
@@ -850,7 +850,7 @@ namespace Dragablz
 
             e.DragablzItem.IsDropTargetFound = false;
 
-            var sourceOfDragItemsControl = ItemsControlFromItemContainer(e.DragablzItem) as DragablzItemsControl;
+            var sourceOfDragItemsControl = ItemsControlFromItemContainer(e.DragablzItem) as DragablzItem;
             if (sourceOfDragItemsControl == null || !Equals(sourceOfDragItemsControl, this)) return;
 
             var itemsControlOffset = Mouse.GetPosition(this);
@@ -871,7 +871,7 @@ namespace Dragablz
                 IsDraggingWindow = true;
         }
 
-        private bool ShouldDragWindow(DragablzItemsControl sourceOfDragItemsControl)
+        private bool ShouldDragWindow(DragablzItem sourceOfDragItemsControl)
         {
             return (Items.Count == 1
                     && (InterTabController == null || InterTabController.MoveWindowWithSolitaryTabs)
@@ -880,7 +880,7 @@ namespace Dragablz
 
         private void PreviewItemDragDelta(object sender, DragablzDragDeltaEventArgs e)
         {
-            var sourceOfDragItemsControl = ItemsControlFromItemContainer(e.DragablzItem) as DragablzItemsControl;
+            var sourceOfDragItemsControl = ItemsControlFromItemContainer(e.DragablzItem) as DragablzItem;
             if (sourceOfDragItemsControl == null || !Equals(sourceOfDragItemsControl, this)) return;
 
             if (!ShouldDragWindow(sourceOfDragItemsControl)) return;
@@ -1107,7 +1107,7 @@ namespace Dragablz
             System.Diagnostics.Debug.WriteLine("B " + minSize);
 
             RemoveFromSource(item);
-            _itemsHolder.Children.Remove(contentPresenter);
+            //_itemsHolder.Children.Remove(contentPresenter);
             if (Items.Count == 0)
             {
                 MinHeight = minSize.Height;

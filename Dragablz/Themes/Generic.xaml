@@ -608,9 +608,11 @@
         </Style.Triggers>
     </Style>
 
-    <Style TargetType="{x:Type local:DragablzItemsControl}">
+    <Style TargetType="{x:Type local:DragablzItem}">
         <Setter Property="HorizontalAlignment" Value="Left" />
         <Setter Property="VerticalAlignment" Value="Top" />
+        <Setter Property="Canvas.Left" Value="{Binding X, RelativeSource={RelativeSource Self}}" />
+        <Setter Property="Canvas.Top" Value="{Binding Y, RelativeSource={RelativeSource Self}}" />
         <Setter Property="ItemsPanel">
             <Setter.Value>
                 <ItemsPanelTemplate>
@@ -620,22 +622,50 @@
         </Setter>
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="{x:Type local:DragablzItemsControl}">
+                <ControlTemplate TargetType="{x:Type local:DragablzItem}">
                     <Border BorderThickness="{TemplateBinding Border.BorderThickness}" Padding="{TemplateBinding Control.Padding}" BorderBrush="{TemplateBinding Border.BorderBrush}" Background="{TemplateBinding Panel.Background}" SnapsToDevicePixels="True">
-                        <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto"
-                                      Width="{TemplateBinding ActualWidth}"
-                                      Height="{TemplateBinding ActualHeight}"
-                                      Background="{x:Null}">
-                            <ItemsPresenter SnapsToDevicePixels="{TemplateBinding UIElement.SnapsToDevicePixels}"
-                                            HorizontalAlignment="Left"
-                                            VerticalAlignment="Top"
-                                            Width="{TemplateBinding ItemsPresenterWidth}"
-                                            Height="{TemplateBinding ItemsPresenterHeight}"/>
-                        </ScrollViewer>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                            <Thumb Width="30" Height="30" Background="Yellow" x:Name="PART_Thumb" VerticalAlignment="Center" />
+                            <ContentPresenter Grid.Column="1" 
+                                                  Content="{TemplateBinding Header}" 
+                                                  ContentTemplate="{TemplateBinding HeaderTemplate}" 
+                                                  ContentStringFormat="{TemplateBinding HeaderStringFormat}" 
+                                                  HorizontalAlignment="{TemplateBinding Control.HorizontalContentAlignment}" 
+                                                  VerticalAlignment="{TemplateBinding Control.VerticalContentAlignment}" 
+                                                  SnapsToDevicePixels="{TemplateBinding UIElement.SnapsToDevicePixels}" />
+                            <ScrollViewer HorizontalScrollBarVisibility="Auto" 
+                                          VerticalScrollBarVisibility="Auto"
+                                          Grid.Row="1"
+                                          Width="{TemplateBinding ActualWidth}"
+                                          Height="{TemplateBinding ActualHeight}"
+                                          Background="{x:Null}">
+                                <ItemsPresenter SnapsToDevicePixels="{TemplateBinding UIElement.SnapsToDevicePixels}"
+                     HorizontalAlignment="Left"
+                     VerticalAlignment="Top"
+                     Width="{TemplateBinding ItemsPresenterWidth}"
+                     Height="{TemplateBinding ItemsPresenterHeight}"/>
+                            </ScrollViewer>
+                        </Grid>
                     </Border>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
+        <Style.Triggers>
+            <Trigger Property="IsDragging" Value="True">
+                <Setter Property="Opacity" Value=".95" />
+            </Trigger>
+            <Trigger Property="IsSiblingDragging" Value="True">
+                <Setter Property="Opacity" Value=".5" />
+            </Trigger>
+        </Style.Triggers>
     </Style>
 
     <ControlTemplate x:Key="TabablzScrollViewerControlTemplate" TargetType="{x:Type ScrollViewer}">
@@ -658,7 +688,7 @@
     </ControlTemplate>
 
 
-    <Style TargetType="{x:Type local:DragablzItem}">
+    <!--<Style TargetType="{x:Type local:DragablzItem}">
         <Style.Setters>
             <Setter Property="Canvas.Left" Value="{Binding X, RelativeSource={RelativeSource Self}}" />
             <Setter Property="Canvas.Top" Value="{Binding Y, RelativeSource={RelativeSource Self}}" />
@@ -693,7 +723,7 @@
                 <Setter Property="Opacity" Value=".5" />
             </Trigger>
         </Style.Triggers>
-    </Style>
+    </Style>-->
 
     <Style TargetType="{x:Type local:DragablzItem}" x:Key="HeaderedDragablzItemStyle">
         <Style.Setters>
@@ -1182,8 +1212,8 @@
                                 </Button.Visibility>
                             </Button>
                         </Grid>
-                        
-                        
+
+
                     </Grid>
                     <ControlTemplate.Triggers>
                         <Trigger Property="local:TabablzControl.IsWrappingTabItem" Value="True">
@@ -1337,7 +1367,7 @@
                             </MultiDataTrigger.Conditions>
                             <Setter Property="BorderThickness" TargetName="innerBorder" Value="1,1,1,0"/>
                             <Setter Property="BorderThickness" TargetName="mainBorder" Value="1,1,1,0"/>
-                        </MultiDataTrigger>      
+                        </MultiDataTrigger>
                         <MultiDataTrigger>
                             <MultiDataTrigger.Conditions>
                                 <Condition Binding="{Binding IsSelected, RelativeSource={RelativeSource Self}}"                                            
@@ -1614,9 +1644,9 @@
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type local:TabablzControl}">
                     <ControlTemplate.Resources>
-                 
-                            <math:MathConverter x:Key="Math" />
-              
+
+                        <math:MathConverter x:Key="Math" />
+
                     </ControlTemplate.Resources>
                     <Grid x:Name="templateRoot" ClipToBounds="true" SnapsToDevicePixels="true" KeyboardNavigation.TabNavigation="Local">
                         <Grid.ColumnDefinitions>
@@ -1635,11 +1665,11 @@
         KeyboardNavigation.DirectionalNavigation="Contained" KeyboardNavigation.TabIndex="2" KeyboardNavigation.TabNavigation="Local"
         Margin="0 -1 0 0"
         >
-                <!--<Grid x:Name="PART_ItemsHolder" />-->
+                            <!--<Grid x:Name="PART_ItemsHolder" />-->
 
-                <ContentPresenter x:Name="SuffixContentControl" ContentSource="SelectedItem"  HorizontalAlignment="Stretch"  VerticalAlignment="Stretch"/>
+                            <ContentPresenter x:Name="SuffixContentControl" ContentSource="SelectedItem"  HorizontalAlignment="Stretch"  VerticalAlignment="Stretch"/>
 
-            </Border>
+                        </Border>
 
                         <Grid Grid.Column="0" 
                               VerticalAlignment="Stretch"
@@ -1654,7 +1684,7 @@
                                 <ColumnDefinition Width="Auto" />
                                 <ColumnDefinition Width="Auto" />
                             </Grid.ColumnDefinitions>
-      
+
                             <ContentPresenter Grid.Column="0" x:Name="PrefixContentControl" ContentSource="Header"/>
                             <Border
                                 x:Name="PART_HeaderItemsControl"     
@@ -1722,9 +1752,9 @@
                         <!--<Border Grid.Row="1" Background="DarkSlateGray">
                  
                         </Border>-->
-                     
-            
-          
+
+
+
                     </Grid>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsHeaderPanelVisible" Value="False">
@@ -1799,7 +1829,7 @@
                                         <RowDefinition Height="Auto" />
                                         <RowDefinition Height="*" />
                                     </Grid.RowDefinitions>
-                   
+
                                     <ContentPresenter Grid.Row="0" x:Name="PrefixContentControl" ContentSource="Header"/>
                                     <Border
                                         Grid.Row="1"
@@ -1860,7 +1890,7 @@
         </Setter>
     </Style>
 
-    <Style TargetType="{x:Type local:DragablzItemsControl}" x:Key="FloatingDragablzItemsControlStyle">
+    <Style TargetType="{x:Type local:DragablzItem}" x:Key="FloatingDragablzItemsControlStyle">
         <Setter Property="Background" Value="{x:Null}" />
         <Setter Property="HorizontalAlignment" Value="Stretch" />
         <Setter Property="VerticalAlignment" Value="Stretch" />
@@ -1878,7 +1908,7 @@
         </Setter>
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="{x:Type local:DragablzItemsControl}">
+                <ControlTemplate TargetType="{x:Type local:DragablzItem}">
                     <Border BorderThickness="{TemplateBinding Border.BorderThickness}" Padding="{TemplateBinding Control.Padding}" BorderBrush="{TemplateBinding Border.BorderBrush}" Background="{TemplateBinding Panel.Background}" SnapsToDevicePixels="True">
                         <ItemsPresenter SnapsToDevicePixels="{TemplateBinding UIElement.SnapsToDevicePixels}"
                                         HorizontalAlignment="Left"

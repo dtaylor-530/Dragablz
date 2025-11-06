@@ -142,8 +142,8 @@
         </Style.Triggers>
     </Style>
 
-    
-    
+
+
     <Style x:Key="MaterialDesignDragableTabItemStyle"  TargetType="{x:Type dragablz:DragablzItem}">
         <Setter Property="FocusVisualStyle" Value="{StaticResource MaterialDesignFocusVisual}"/>
         <Setter Property="Foreground" Value="{DynamicResource PrimaryHueMidForegroundBrush}"/>
@@ -533,7 +533,7 @@
         </Grid>
     </ControlTemplate>
 
-    <Style TargetType="{x:Type dragablz:DragablzItemsControl}" x:Key="TabablzDragablzItemsControlStyle">
+    <Style TargetType="{x:Type dragablz:DragablzItem}" x:Key="TabablzDragablzItemsControlStyle">
         <Setter Property="HorizontalAlignment" Value="Left" />
         <Setter Property="VerticalAlignment" Value="Top" />
         <Setter Property="ItemsPanel">
@@ -545,7 +545,7 @@
         </Setter>
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="{x:Type dragablz:DragablzItemsControl}">
+                <ControlTemplate TargetType="{x:Type dragablz:DragablzItem}">
                     <Border BorderThickness="{TemplateBinding Border.BorderThickness}" Padding="{TemplateBinding Control.Padding}" BorderBrush="{TemplateBinding Border.BorderBrush}" Background="{TemplateBinding Panel.Background}" SnapsToDevicePixels="True">
                         <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto"
                                       Width="{TemplateBinding ActualWidth}"
@@ -620,8 +620,8 @@
                                             ContentStringFormat="{TemplateBinding HeaderPrefixContentStringFormat}"
                                             ContentTemplate="{TemplateBinding HeaderPrefixContentStringFormat}"
                                             ContentTemplateSelector="{TemplateBinding HeaderPrefixContentTemplateSelector}"/>-->
-                            <dragablz:DragablzItemsControl x:Name="PART_HeaderItemsControl" ></dragablz:DragablzItemsControl>
-                            <!--<dragablz:DragablzItemsControl x:Name="PART_HeaderItemsControl"                                                         
+                            <dragablz:DragablzItem x:Name="PART_HeaderItemsControl" ></dragablz:DragablzItem>
+                            <!--<dragablz:DragablzItem x:Name="PART_HeaderItemsControl"                                                         
                                                            Grid.Column="1"
                                                            FixedItemCount="{TemplateBinding FixedHeaderCount}"
                                                            ItemsSource="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Items}"                                                                                                            
@@ -629,8 +629,8 @@
                                                            ItemsOrganiser="{TemplateBinding HeaderItemsOrganiser}"
                                                            KeyboardNavigation.TabIndex="1" Panel.ZIndex="1"
                                                            ItemTemplate="{TemplateBinding HeaderItemTemplate}"
-                                                           Style="{StaticResource TabablzDragablzItemsControlStyle}">
-                                <dragablz:DragablzItemsControl.MaxWidth>
+                                                           Style="{StaticResource TabablzDragablzItemStyle}">
+                                <dragablz:DragablzItem.MaxWidth>
                                     <MultiBinding>
                                         <MultiBinding.Converter>
                                             <dragablz:TabablzHeaderSizeConverter Orientation="Horizontal"/>
@@ -641,8 +641,8 @@
                                         <Binding ElementName="DefaultAddButton" Path="DesiredSize.Width" />
                                         <Binding ElementName="SuffixContentControl" Path="DesiredSize.Width" />
                                     </MultiBinding>
-                                </dragablz:DragablzItemsControl.MaxWidth>
-                            </dragablz:DragablzItemsControl>-->
+                                </dragablz:DragablzItem.MaxWidth>
+                            </dragablz:DragablzItem>-->
                             <Button Style="{StaticResource MaterialDesignAddItemCommandButtonStyle}"
                                     x:Name="DefaultAddButton"
                                     Grid.Column="2"
@@ -714,8 +714,8 @@
                                                                 ContentStringFormat="{TemplateBinding HeaderPrefixContentStringFormat}"
                                                                 ContentTemplate="{TemplateBinding HeaderPrefixContentStringFormat}"
                                                                 ContentTemplateSelector="{TemplateBinding HeaderPrefixContentTemplateSelector}"/>-->
-                                    <dragablz:DragablzItemsControl x:Name="PART_HeaderItemsControl" ></dragablz:DragablzItemsControl>
-                                    <!--<dragablz:DragablzItemsControl x:Name="PART_HeaderItemsControl"                                                         
+                                    <dragablz:DragablzItem x:Name="PART_HeaderItemsControl" ></dragablz:DragablzItem>
+                                    <!--<dragablz:DragablzItem x:Name="PART_HeaderItemsControl"                                                         
                                                                    Grid.Row="1"                                                                   
                                                                    ItemsSource="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Items}"                                                                                                            
                                                                    ItemContainerStyle="{TemplateBinding ItemContainerStyle}"
@@ -723,8 +723,8 @@
                                                                    ItemsOrganiser="{TemplateBinding HeaderItemsOrganiser}"
                                                                    KeyboardNavigation.TabIndex="1" Panel.ZIndex="1"
                                                                    ItemTemplate="{TemplateBinding HeaderItemTemplate}"
-                                                                   Style="{StaticResource TabablzDragablzItemsControlStyle}">
-                                        <dragablz:DragablzItemsControl.MaxHeight>
+                                                                   Style="{StaticResource TabablzDragablzItemStyle}">
+                                        <dragablz:DragablzItem.MaxHeight>
                                             <MultiBinding>
                                                 <MultiBinding.Converter>
                                                     <dragablz:TabablzHeaderSizeConverter Orientation="Vertical"/>
@@ -735,8 +735,8 @@
                                                 <Binding ElementName="DefaultAddButton" Path="DesiredSize.Height" />
                                                 <Binding ElementName="SuffixContentControl" Path="DesiredSize.Height" />
                                             </MultiBinding>
-                                        </dragablz:DragablzItemsControl.MaxHeight>
-                                    </dragablz:DragablzItemsControl>-->
+                                        </dragablz:DragablzItem.MaxHeight>
+                                    </dragablz:DragablzItem>-->
                                     <Button Style="{StaticResource MaterialDesignAddItemCommandButtonStyle}"
                                             x:Name="DefaultAddButton"
                                             Grid.Row="2"

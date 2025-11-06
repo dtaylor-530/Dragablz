@@ -85,7 +85,7 @@ namespace Dragablz
 
         private void ItemDragStarted(object sender, DragablzDragStartedEventArgs e)
         {
-            var sourceOfDragItemsControl = ItemsControl.ItemsControlFromItemContainer(e.DragablzItem) as DragablzItemsControl;
+            var sourceOfDragItemsControl = ItemsControl.ItemsControlFromItemContainer(e.DragablzItem) as DragablzItem;
             if (sourceOfDragItemsControl == null) return;
 
             var sourceTab = TabablzControl.GetOwnerOfHeaderItems(sourceOfDragItemsControl);

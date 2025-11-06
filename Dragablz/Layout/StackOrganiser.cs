@@ -89,7 +89,7 @@ namespace Dragablz
             get { return _orientation; }
         }
 
-        public virtual void Organise(DragablzItemsControl requestor, Size measureBounds, IEnumerable<DragablzItem> items)
+        public virtual void Organise(DragablzItem requestor, Size measureBounds, IEnumerable<DragablzItem> items)
         {
             if (items == null) throw new ArgumentNullException("items");
 
@@ -103,7 +103,7 @@ namespace Dragablz
                         .Select(tuple => tuple.Item2));            
         }
 
-        public virtual void Organise(DragablzItemsControl requestor, Size measureBounds, IOrderedEnumerable<DragablzItem> items)
+        public virtual void Organise(DragablzItem requestor, Size measureBounds, IOrderedEnumerable<DragablzItem> items)
         {
             if (items == null) throw new ArgumentNullException("items");
 
@@ -113,7 +113,7 @@ namespace Dragablz
                 items);
         }
 
-        private void OrganiseInternal(DragablzItemsControl requestor, Size measureBounds,
+        private void OrganiseInternal(DragablzItem requestor, Size measureBounds,
             IEnumerable<DragablzItem> items)
         {
             var currentCoord = 0.0;
@@ -132,7 +132,7 @@ namespace Dragablz
         }
 
 
-        public virtual void OrganiseOnMouseDownWithin(DragablzItemsControl requestor, Size measureBounds,
+        public virtual void OrganiseOnMouseDownWithin(DragablzItem requestor, Size measureBounds,
             List<DragablzItem> siblingItems, DragablzItem dragablzItem)
         {
 
@@ -140,7 +140,7 @@ namespace Dragablz
 
         private IDictionary<DragablzItem, LocationInfo> _siblingItemLocationOnDragStart;
 
-        public virtual void OrganiseOnDragStarted(DragablzItemsControl requestor, Size measureBounds,
+        public virtual void OrganiseOnDragStarted(DragablzItem requestor, Size measureBounds,
             IEnumerable<DragablzItem> siblingItems, DragablzItem dragItem)
         {
             if (siblingItems == null) throw new ArgumentNullException("siblingItems");
@@ -149,7 +149,7 @@ namespace Dragablz
             _siblingItemLocationOnDragStart = siblingItems.Select(GetLocationInfo).ToDictionary(loc => loc.Item);
         }
 
-        public virtual void OrganiseOnDrag(DragablzItemsControl requestor, Size measureBounds,
+        public virtual void OrganiseOnDrag(DragablzItem requestor, Size measureBounds,
             IEnumerable<DragablzItem> siblingItems, DragablzItem dragItem)
         {
             if (siblingItems == null) throw new ArgumentNullException("siblingItems");
@@ -174,7 +174,7 @@ namespace Dragablz
             Panel.SetZIndex(dragItem, int.MaxValue);
         }
 
-        public virtual void OrganiseOnDragCompleted(DragablzItemsControl requestor, Size measureBounds,
+        public virtual void OrganiseOnDragCompleted(DragablzItem requestor, Size measureBounds,
             IEnumerable<DragablzItem> siblingItems, DragablzItem dragItem)
         {
             if (siblingItems == null) throw new ArgumentNullException("siblingItems");
@@ -196,7 +196,7 @@ namespace Dragablz
             Panel.SetZIndex(dragItem, int.MaxValue);
         }
 
-        public virtual Point ConstrainLocation(DragablzItemsControl requestor, Size measureBounds, Point itemCurrentLocation,
+        public virtual Point ConstrainLocation(DragablzItem requestor, Size measureBounds, Point itemCurrentLocation,
             Size itemCurrentSize, Point itemDesiredLocation, Size itemDesiredSize)
         {
             var fixedItems = requestor.FixedItemCount;
@@ -216,7 +216,7 @@ namespace Dragablz
                 );
         }
 
-        public virtual Size Measure(DragablzItemsControl requestor, Size availableSize, IEnumerable<DragablzItem> items)
+        public virtual Size Measure(DragablzItem requestor, Size availableSize, IEnumerable<DragablzItem> items)
         {
             if (items == null) throw new ArgumentNullException("items");
 
