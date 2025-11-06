@@ -63,4 +63,8 @@
     </None>
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="MathConverter" Version="2.2.1" />
+  </ItemGroup>
+
 </Project>

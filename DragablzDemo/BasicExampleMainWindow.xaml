@@ -79,24 +79,24 @@
         <TabItem Header="Basic bound tabs example">            
             <dragablz:TabablzControl Margin="8 8 8 8" ItemsSource="{Binding ViewModels}"
                                      SelectedItem="{Binding SelectedViewModel}">
-                <dragablz:TabablzControl.HeaderSuffixContent>
+                <!--<dragablz:TabablzControl.HeaderSuffixContent>
                     <Button Command="{Binding AddNewViewModel}">+</Button>
-                </dragablz:TabablzControl.HeaderSuffixContent>
-                <TabControl.ContentTemplate>
+                </dragablz:TabablzControl.HeaderSuffixContent>-->
+                <dragablz:TabablzControl.HeaderTemplate>
                     <DataTemplate DataType="{x:Type dragablzDemo:SimpleViewModel}">
                         <TextBlock Text="{Binding SimpleContent}" />
                     </DataTemplate>
-                </TabControl.ContentTemplate>
-                <dragablz:TabablzControl.HeaderItemTemplate>
+                </dragablz:TabablzControl.HeaderTemplate>
+                <!--<dragablz:TabablzControl.ItemTemplate>
                     <DataTemplate DataType="{x:Type dragablzDemo:SimpleViewModel}">
                         <TextBlock Text="{Binding Name}" />
                     </DataTemplate>
-                </dragablz:TabablzControl.HeaderItemTemplate>
-                <TabControl.ItemTemplate>
+                </dragablz:TabablzControl.ItemTemplate>-->
+                <!--<dragablz:TabablzControl.ItemTemplate>
                     <DataTemplate DataType="{x:Type dragablzDemo:SimpleViewModel}">
                         <TextBlock Text="{Binding SimpleContent}" />
                     </DataTemplate>
-                </TabControl.ItemTemplate>
+                </dragablz:TabablzControl.ItemTemplate>-->
             </dragablz:TabablzControl>            
         </TabItem>
         <TabItem Header="Cool features">
