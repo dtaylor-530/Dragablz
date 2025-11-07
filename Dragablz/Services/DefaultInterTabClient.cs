@@ -8,7 +8,7 @@ namespace Dragablz
 {
     public class DefaultInterTabClient : IInterTabClient
     {
-        public virtual INewTabHost<Window> GetNewHost(IInterTabClient interTabClient, object partition, TabablzControl source)
+        public virtual INewTabHost<Window> GetNewHost(IInterTabClient interTabClient, object partition, DragablzItem source)
         {
             if (source == null) throw new ArgumentNullException("source");
             var sourceWindow = Window.GetWindow(source);
@@ -17,7 +17,7 @@ namespace Dragablz
 
             newWindow.Dispatcher.Invoke(new Action(() => { }), DispatcherPriority.DataBind);
 
-            var newTabablzControl = newWindow.LogicalTreeDepthFirstTraversal().OfType<TabablzControl>().FirstOrDefault();
+            var newTabablzControl = newWindow.LogicalTreeDepthFirstTraversal().OfType<DragablzItem>().FirstOrDefault();
             if (newTabablzControl == null) throw new ApplicationException("Unable to ascertain tab control.");
 
             if (newTabablzControl.ItemsSource == null)
@@ -26,7 +26,7 @@ namespace Dragablz
             return new NewTabHost<Window>(newWindow, newTabablzControl);
         }
 
-        public virtual TabEmptiedResponse TabEmptiedHandler(TabablzControl tabControl, Window window)
+        public virtual TabEmptiedResponse TabEmptiedHandler(DragablzItem tabControl, Window window)
         {
             return TabEmptiedResponse.CloseWindowOrLayoutBranch;
         }

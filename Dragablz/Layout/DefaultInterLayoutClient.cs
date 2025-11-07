@@ -12,11 +12,11 @@ namespace Dragablz
     /// </summary>
     public class DefaultInterLayoutClient : IInterLayoutClient
     {
-        public INewTabHost<UIElement> GetNewHost(object partition, TabablzControl source)
+        public INewTabHost<UIElement> GetNewHost(object partition, DragablzItem source)
         {
-            var tabablzControl = new TabablzControl { DataContext = source.DataContext };
+            var dragablzItem = new DragablzItem { DataContext = source.DataContext };
 
-            Clone(source, tabablzControl);
+            Clone(source, dragablzItem);
 
             if (source.InterTabController == null)
                 throw new InvalidOperationException("Source tab does not have an InterTabCOntroller set.  Ensure this is set on initial, and subsequently generated tab controls.");
@@ -26,9 +26,9 @@ namespace Dragablz
                 Partition = source.InterTabController.Partition
             };
             Clone(source.InterTabController, newInterTabController);
-            tabablzControl.SetCurrentValue(TabablzControl.InterTabControllerProperty, newInterTabController);
+            dragablzItem.SetCurrentValue(DragablzItem.InterTabControllerProperty, newInterTabController);
 
-            return new NewTabHost<UIElement>(tabablzControl, tabablzControl);
+            return new NewTabHost<UIElement>(dragablzItem, dragablzItem);
         }
 
         private static void Clone(DependencyObject from, DependencyObject to)

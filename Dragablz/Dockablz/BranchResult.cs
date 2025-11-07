@@ -5,15 +5,15 @@ namespace Dragablz.Dockablz
     public class BranchResult
     {
         private readonly Branch _branch;
-        private readonly TabablzControl _tabablzControl;
+        private readonly DragablzItem _DragablzItem;
 
-        public BranchResult(Branch branch, TabablzControl tabablzControl)
+        public BranchResult(Branch branch, DragablzItem DragablzItem)
         {
             if (branch == null) throw new ArgumentNullException("branch");
-            if (tabablzControl == null) throw new ArgumentNullException("tabablzControl");
+            if (DragablzItem == null) throw new ArgumentNullException("DragablzItem");
 
             _branch = branch;
-            _tabablzControl = tabablzControl;
+            _DragablzItem = DragablzItem;
         }
 
         /// <summary>
@@ -27,9 +27,9 @@ namespace Dragablz.Dockablz
         /// <summary>
         /// The new tab control.
         /// </summary>
-        public TabablzControl TabablzControl
+        public DragablzItem DragablzItem
         {
-            get { return _tabablzControl; }
+            get { return _DragablzItem; }
         }
     }
 }

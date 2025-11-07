@@ -7,7 +7,7 @@ namespace Dragablz.Dockablz
     /// </summary>
     public class LocationReport
     {
-        private readonly TabablzControl _tabablzControl;
+        private readonly DragablzItem _tabablzControl;
         private readonly Layout _rootLayout;
         private readonly Branch _parentBranch;
         private readonly bool _isLeaf;
@@ -15,11 +15,11 @@ namespace Dragablz.Dockablz
 
         //TODO I've internalised constructor for now, so I can come back and add Window without breaking.
 
-        internal LocationReport(TabablzControl tabablzControl, Layout rootLayout)
+        internal LocationReport(DragablzItem tabablzControl, Layout rootLayout)
             : this(tabablzControl, rootLayout, null, false)
         { }
 
-        internal LocationReport(TabablzControl tabablzControl, Layout rootLayout, Branch parentBranch, bool isSecondLeaf)
+        internal LocationReport(DragablzItem tabablzControl, Layout rootLayout, Branch parentBranch, bool isSecondLeaf)
         {
             if (tabablzControl == null) throw new ArgumentNullException("tabablzControl");
             if (rootLayout == null) throw new ArgumentNullException("rootLayout");
@@ -31,7 +31,7 @@ namespace Dragablz.Dockablz
             _isSecondLeaf = isSecondLeaf;
         }
 
-        public TabablzControl TabablzControl
+        public DragablzItem TabablzControl
         {
             get { return _tabablzControl; }
         }

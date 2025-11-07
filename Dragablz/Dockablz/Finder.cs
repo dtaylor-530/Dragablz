@@ -4,9 +4,9 @@ namespace Dragablz.Dockablz
 {
     internal static class Finder
     {
-        internal static LocationReport Find(TabablzControl tabablzControl)
+        internal static LocationReport Find(DragablzItem tabablzControl)
         {
-            if (tabablzControl == null) throw new ArgumentNullException("tabablzControl");
+            if (tabablzControl == null) throw new ArgumentNullException("DragablzItem");
 
             var locationReportBuilder = new LocationReportBuilder(tabablzControl);
 
@@ -44,9 +44,9 @@ namespace Dragablz.Dockablz
             }
         }
 
-        private static void TabablzControlVisitor(LocationReportBuilder locationReportBuilder, TabablzControl tabablzControl)
+        private static void TabablzControlVisitor(LocationReportBuilder locationReportBuilder, DragablzItem DragablzItem)
         {
-            if (Equals(tabablzControl, locationReportBuilder.TargetTabablzControl))
+            if (Equals(DragablzItem, locationReportBuilder.TargetTabablzControl))
                 locationReportBuilder.MarkFound();
         }
     }

@@ -4,17 +4,17 @@ namespace Dragablz.Dockablz
 {
     internal class LocationReportBuilder
     {
-        private readonly TabablzControl _targetTabablzControl;
+        private readonly DragablzItem _targetTabablzControl;
         private Branch _branch;
         private bool _isSecondLeaf;
         private Layout _layout;
 
-        public LocationReportBuilder(TabablzControl targetTabablzControl)
+        public LocationReportBuilder(DragablzItem targetTabablzControl)
         {
             _targetTabablzControl = targetTabablzControl;
         }
 
-        public TabablzControl TargetTabablzControl
+        public DragablzItem TargetTabablzControl
         {
             get { return _targetTabablzControl; }
         }

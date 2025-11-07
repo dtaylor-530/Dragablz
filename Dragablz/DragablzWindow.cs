@@ -87,7 +87,7 @@ namespace Dragablz
             var sourceOfDragItemsControl = ItemsControl.ItemsControlFromItemContainer(e.DragablzItem) as DragablzItem;
             if (sourceOfDragItemsControl == null) return;
 
-            var sourceTab = TabablzControl.GetOwnerOfHeaderItems(sourceOfDragItemsControl);
+            var sourceTab = DragablzItem.GetOwnerOfHeaderItems(sourceOfDragItemsControl);
             if (sourceTab == null) return;
 
             if (sourceOfDragItemsControl.Items.Count != 1

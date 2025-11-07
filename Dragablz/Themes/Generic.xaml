@@ -4,14 +4,15 @@
     xmlns:local="clr-namespace:Dragablz"
     xmlns:converters="clr-namespace:Dragablz.Converters"
     xmlns:dockablz="clr-namespace:Dragablz.Dockablz"
-    xmlns:themes="clr-namespace:Dragablz.Themes">
+    xmlns:themes="clr-namespace:Dragablz.Themes"
+       xmlns:math="http://hexinnovation.com/math">
 
     <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
     <converters:EqualityToVisibilityConverter x:Key="EqualityToVisibilityConverter" />
     <converters:BooleanAndToVisibilityConverter x:Key="BooleanAndToVisibilityConverter" />
     <converters:EqualityToBooleanConverter x:Key="EqualityToBooleanConverter" />
     <converters:ShowDefaultCloseButtonConverter x:Key="ShowDefaultCloseButtonConverter" />
-
+    <math:MathConverter x:Key="Math" />
     <Style x:Key="FocusVisual">
         <Setter Property="Control.Template">
             <Setter.Value>
@@ -1083,12 +1084,12 @@
                                        Style="{StaticResource InvisibleThumbStyle}" />
                                 <Button Grid.Column="1"
                                         Style="{StaticResource CloseItemCommandButtonStyle}"
-                                        Command="{x:Static local:TabablzControl.CloseItemCommand}"
+                                        Command="{x:Static local:DragablzItem.CloseItemCommand}"
                                         CommandParameter="{Binding RelativeSource={RelativeSource TemplatedParent}}">
                                     <Button.Visibility>
                                         <MultiBinding Converter="{StaticResource ShowDefaultCloseButtonConverter}">
-                                            <Binding RelativeSource="{RelativeSource FindAncestor, AncestorType={x:Type local:TabablzControl}}" Path="ShowDefaultCloseButton" />
-                                            <Binding RelativeSource="{RelativeSource FindAncestor, AncestorType={x:Type local:TabablzControl}}" Path="FixedHeaderCount" />
+                                            <Binding RelativeSource="{RelativeSource FindAncestor, AncestorType={x:Type local:DragablzItem}, AncestorLevel=1}" Converter="{x:Static local:DefaultConverter.Instance}" Path="ShowDefaultCloseButton" />
+                                            <Binding RelativeSource="{RelativeSource FindAncestor, AncestorType={x:Type local:DragablzItem},AncestorLevel=1}" Path="FixedHeaderCount" />
                                             <Binding RelativeSource="{RelativeSource TemplatedParent}" Path="LogicalIndex" />
                                         </MultiBinding>
                                     </Button.Visibility>
@@ -1097,7 +1098,7 @@
                         </local:Trapezoid>
                     </Grid>
                     <ControlTemplate.Triggers>
-                        <Trigger Property="local:TabablzControl.IsWrappingTabItem" Value="True">
+                        <Trigger Property="local:DragablzItem.IsWrappingTabItem" Value="True">
                             <Setter TargetName="contentPresenter" Property="Content" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=DataContext.Header}" />
                         </Trigger>
                         <Trigger Property="IsSelected" Value="True">
@@ -1159,12 +1160,12 @@
              Style="{StaticResource InvisibleThumbStyle}" />
                             <Button Grid.Column="1"
               Style="{StaticResource CloseItemCommandButtonStyle}"
-              Command="{x:Static local:TabablzControl.CloseItemCommand}"
+              Command="{x:Static local:DragablzItem.CloseItemCommand}"
               CommandParameter="{Binding RelativeSource={RelativeSource TemplatedParent}}">
                                 <Button.Visibility>
                                     <MultiBinding Converter="{StaticResource ShowDefaultCloseButtonConverter}">
-                                        <Binding RelativeSource="{RelativeSource FindAncestor, AncestorType={x:Type local:TabablzControl}}" Path="ShowDefaultCloseButton" />
-                                        <Binding RelativeSource="{RelativeSource FindAncestor, AncestorType={x:Type local:TabablzControl}}" Path="FixedHeaderCount" />
+                                        <Binding RelativeSource="{RelativeSource FindAncestor, AncestorType={x:Type local:DragablzItem},AncestorLevel=2}" Converter="{x:Static local:DefaultConverter.Instance}"  Path="ShowDefaultCloseButton" />
+                                        <Binding RelativeSource="{RelativeSource FindAncestor, AncestorType={x:Type local:DragablzItem},AncestorLevel=2}" Path="FixedHeaderCount" />
                                         <Binding RelativeSource="{RelativeSource TemplatedParent}" Path="LogicalIndex" />
                                     </MultiBinding>
                                 </Button.Visibility>
@@ -1172,13 +1173,13 @@
                         </Grid>
                     </Grid>
                     <ControlTemplate.Triggers>
-                        <Trigger Property="local:TabablzControl.IsWrappingTabItem" Value="True">
+                        <Trigger Property="local:DragablzItem.IsWrappingTabItem" Value="True">
                             <Setter TargetName="contentPresenter" Property="Content" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=DataContext.Header}" />
                         </Trigger>
                         <MultiDataTrigger>
                             <MultiDataTrigger.Conditions>
                                 <Condition Binding="{Binding IsMouseOver, RelativeSource={RelativeSource Self}}" Value="true" />
-                                <Condition Binding="{Binding TabStripPlacement, RelativeSource={RelativeSource AncestorType={x:Type local:TabablzControl}}}" Value="Left" />
+                                <Condition Binding="{Binding TabStripPlacement, RelativeSource={RelativeSource AncestorType={x:Type local:DragablzItem}, AncestorLevel=1}}" Value="Left" />
                             </MultiDataTrigger.Conditions>
                             <Setter Property="Background" TargetName="mainBorder" Value="{StaticResource TabItem.MouseOver.Background}" />
                             <Setter Property="BorderBrush" TargetName="mainBorder" Value="{StaticResource TabItem.MouseOver.Border}" />
@@ -1188,7 +1189,7 @@
                         <MultiDataTrigger>
                             <MultiDataTrigger.Conditions>
                                 <Condition Binding="{Binding IsMouseOver, RelativeSource={RelativeSource Self}}" Value="true" />
-                                <Condition Binding="{Binding TabStripPlacement, RelativeSource={RelativeSource AncestorType={x:Type local:TabablzControl}}}" Value="Bottom" />
+                                <Condition Binding="{Binding TabStripPlacement, RelativeSource={RelativeSource AncestorType={x:Type local:DragablzItem}, AncestorLevel=1}}" Value="Bottom" />
                             </MultiDataTrigger.Conditions>
                             <Setter Property="Background" TargetName="mainBorder" Value="{StaticResource TabItem.MouseOver.Background}" />
                             <Setter Property="BorderBrush" TargetName="mainBorder" Value="{StaticResource TabItem.MouseOver.Border}" />
@@ -1198,7 +1199,7 @@
                         <MultiDataTrigger>
                             <MultiDataTrigger.Conditions>
                                 <Condition Binding="{Binding IsMouseOver, RelativeSource={RelativeSource Self}}" Value="true" />
-                                <Condition Binding="{Binding TabStripPlacement, RelativeSource={RelativeSource AncestorType={x:Type local:TabablzControl}}}" Value="Right" />
+                                <Condition Binding="{Binding TabStripPlacement, RelativeSource={RelativeSource AncestorType={x:Type local:DragablzItem}, AncestorLevel=1}}" Value="Right" />
                             </MultiDataTrigger.Conditions>
                             <Setter Property="Background" TargetName="mainBorder" Value="{StaticResource TabItem.MouseOver.Background}" />
                             <Setter Property="BorderBrush" TargetName="mainBorder" Value="{StaticResource TabItem.MouseOver.Border}" />
@@ -1208,7 +1209,7 @@
                         <MultiDataTrigger>
                             <MultiDataTrigger.Conditions>
                                 <Condition Binding="{Binding IsMouseOver, RelativeSource={RelativeSource Self}}" Value="true" />
-                                <Condition Binding="{Binding TabStripPlacement, RelativeSource={RelativeSource AncestorType={x:Type local:TabablzControl}}}" Value="Top" />
+                                <Condition Binding="{Binding TabStripPlacement, RelativeSource={RelativeSource AncestorType={x:Type local:DragablzItem}, AncestorLevel=1}}" Value="Top" />
                             </MultiDataTrigger.Conditions>
                             <Setter Property="Background" TargetName="mainBorder" Value="{StaticResource TabItem.MouseOver.Background}" />
                             <Setter Property="BorderBrush" TargetName="mainBorder" Value="{StaticResource TabItem.MouseOver.Border}" />
@@ -1218,7 +1219,7 @@
                         <MultiDataTrigger>
                             <MultiDataTrigger.Conditions>
                                 <Condition Binding="{Binding IsEnabled, RelativeSource={RelativeSource Self}}" Value="false" />
-                                <Condition Binding="{Binding TabStripPlacement, RelativeSource={RelativeSource AncestorType={x:Type local:TabablzControl}}}" Value="Left" />
+                                <Condition Binding="{Binding TabStripPlacement, RelativeSource={RelativeSource AncestorType={x:Type local:DragablzItem}, AncestorLevel=1}}" Value="Left" />
                             </MultiDataTrigger.Conditions>
                             <Setter Property="Opacity" TargetName="contentPresenter" Value="0.56" />
                             <Setter Property="Background" TargetName="mainBorder" Value="{StaticResource TabItem.Disabled.Background}" />
@@ -1229,7 +1230,7 @@
                         <MultiDataTrigger>
                             <MultiDataTrigger.Conditions>
                                 <Condition Binding="{Binding IsEnabled, RelativeSource={RelativeSource Self}}" Value="false" />
-                                <Condition Binding="{Binding TabStripPlacement, RelativeSource={RelativeSource AncestorType={x:Type TabControl}}}" Value="Bottom" />
+                                <Condition Binding="{Binding TabStripPlacement, RelativeSource={RelativeSource  AncestorType={x:Type local:DragablzItem}, AncestorLevel=1}}" Value="Bottom" />
                             </MultiDataTrigger.Conditions>
                             <Setter Property="Opacity" TargetName="contentPresenter" Value="0.56" />
                             <Setter Property="Background" TargetName="mainBorder" Value="{StaticResource TabItem.Disabled.Background}" />
@@ -1240,7 +1241,7 @@
                         <MultiDataTrigger>
                             <MultiDataTrigger.Conditions>
                                 <Condition Binding="{Binding IsEnabled, RelativeSource={RelativeSource Self}}" Value="false" />
-                                <Condition Binding="{Binding TabStripPlacement, RelativeSource={RelativeSource AncestorType={x:Type local:TabablzControl}}}" Value="Right" />
+                                <Condition Binding="{Binding TabStripPlacement, RelativeSource={RelativeSource AncestorType={x:Type local:DragablzItem}, AncestorLevel=1}}" Value="Right" />
                             </MultiDataTrigger.Conditions>
                             <Setter Property="Opacity" TargetName="contentPresenter" Value="0.56" />
                             <Setter Property="Background" TargetName="mainBorder" Value="{StaticResource TabItem.Disabled.Background}" />
@@ -1251,7 +1252,7 @@
                         <MultiDataTrigger>
                             <MultiDataTrigger.Conditions>
                                 <Condition Binding="{Binding IsEnabled, RelativeSource={RelativeSource Self}}" Value="false" />
-                                <Condition Binding="{Binding TabStripPlacement, RelativeSource={RelativeSource AncestorType={x:Type local:TabablzControl}}}" Value="Top" />
+                                <Condition Binding="{Binding TabStripPlacement, RelativeSource={RelativeSource AncestorType={x:Type local:DragablzItem}, AncestorLevel=1}}" Value="Top" />
                             </MultiDataTrigger.Conditions>
                             <Setter Property="Opacity" TargetName="contentPresenter" Value="0.56" />
                             <Setter Property="Background" TargetName="mainBorder" Value="{StaticResource TabItem.Disabled.Background}" />
@@ -1262,7 +1263,7 @@
                         <MultiDataTrigger>
                             <MultiDataTrigger.Conditions>
                                 <Condition Binding="{Binding IsSelected, RelativeSource={RelativeSource Self}}" Value="false" />
-                                <Condition Binding="{Binding TabStripPlacement, RelativeSource={RelativeSource AncestorType={x:Type local:TabablzControl}}}" Value="Left" />
+                                <Condition Binding="{Binding TabStripPlacement, RelativeSource={RelativeSource AncestorType={x:Type local:DragablzItem}, AncestorLevel=1}}" Value="Left" />
                             </MultiDataTrigger.Conditions>
                             <Setter Property="BorderThickness" TargetName="innerBorder" Value="1,1,0,1" />
                             <Setter Property="BorderThickness" TargetName="mainBorder" Value="1,1,0,1" />
@@ -1270,7 +1271,7 @@
                         <MultiDataTrigger>
                             <MultiDataTrigger.Conditions>
                                 <Condition Binding="{Binding IsSelected, RelativeSource={RelativeSource Self}}" Value="true" />
-                                <Condition Binding="{Binding TabStripPlacement, RelativeSource={RelativeSource AncestorType={x:Type local:TabablzControl}}}" Value="Left" />
+                                <Condition Binding="{Binding TabStripPlacement, RelativeSource={RelativeSource AncestorType={x:Type local:DragablzItem}, AncestorLevel=1}}" Value="Left" />
                             </MultiDataTrigger.Conditions>
                             <Setter Property="Panel.ZIndex" Value="1" />
                             <Setter Property="Margin" Value="-2,-2,0,-2" />
@@ -1281,7 +1282,7 @@
                         <MultiDataTrigger>
                             <MultiDataTrigger.Conditions>
                                 <Condition Binding="{Binding IsSelected, RelativeSource={RelativeSource Self}}" Value="false" />
-                                <Condition Binding="{Binding TabStripPlacement, RelativeSource={RelativeSource AncestorType={x:Type local:TabablzControl}}}" Value="Bottom" />
+                                <Condition Binding="{Binding TabStripPlacement, RelativeSource={RelativeSource AncestorType={x:Type local:DragablzItem}, AncestorLevel=1}}" Value="Bottom" />
                             </MultiDataTrigger.Conditions>
                             <Setter Property="BorderThickness" TargetName="innerBorder" Value="1,0,1,1" />
                             <Setter Property="BorderThickness" TargetName="mainBorder" Value="1,0,1,1" />
@@ -1289,7 +1290,7 @@
                         <MultiDataTrigger>
                             <MultiDataTrigger.Conditions>
                                 <Condition Binding="{Binding IsSelected, RelativeSource={RelativeSource Self}}" Value="true" />
-                                <Condition Binding="{Binding TabStripPlacement, RelativeSource={RelativeSource AncestorType={x:Type local:TabablzControl}}}" Value="Bottom" />
+                                <Condition Binding="{Binding TabStripPlacement, RelativeSource={RelativeSource AncestorType={x:Type local:DragablzItem}, AncestorLevel=1}}" Value="Bottom" />
                             </MultiDataTrigger.Conditions>
                             <Setter Property="Panel.ZIndex" Value="1" />
                             <Setter Property="Margin" Value="-2,0,-2,-2" />
@@ -1300,7 +1301,7 @@
                         <MultiDataTrigger>
                             <MultiDataTrigger.Conditions>
                                 <Condition Binding="{Binding IsSelected, RelativeSource={RelativeSource Self}}" Value="false" />
-                                <Condition Binding="{Binding TabStripPlacement, RelativeSource={RelativeSource AncestorType={x:Type local:TabablzControl}}}" Value="Right" />
+                                <Condition Binding="{Binding TabStripPlacement, RelativeSource={RelativeSource AncestorType={x:Type local:DragablzItem}, AncestorLevel=1}}" Value="Right" />
                             </MultiDataTrigger.Conditions>
                             <Setter Property="BorderThickness" TargetName="innerBorder" Value="0,1,1,1" />
                             <Setter Property="BorderThickness" TargetName="mainBorder" Value="0,1,1,1" />
@@ -1308,7 +1309,7 @@
                         <MultiDataTrigger>
                             <MultiDataTrigger.Conditions>
                                 <Condition Binding="{Binding IsSelected, RelativeSource={RelativeSource Self}}" Value="true" />
-                                <Condition Binding="{Binding TabStripPlacement, RelativeSource={RelativeSource AncestorType={x:Type local:TabablzControl}}}" Value="Right" />
+                                <Condition Binding="{Binding TabStripPlacement, RelativeSource={RelativeSource AncestorType={x:Type local:DragablzItem}, AncestorLevel=1}}" Value="Right" />
                             </MultiDataTrigger.Conditions>
                             <Setter Property="Panel.ZIndex" Value="1" />
                             <Setter Property="Margin" Value="0,-2,-2,-2" />
@@ -1319,7 +1320,7 @@
                         <MultiDataTrigger>
                             <MultiDataTrigger.Conditions>
                                 <Condition Binding="{Binding IsSelected, RelativeSource={RelativeSource Self}}" Value="false" />
-                                <Condition Binding="{Binding TabStripPlacement, RelativeSource={RelativeSource AncestorType={x:Type local:TabablzControl}}}" Value="Top" />
+                                <Condition Binding="{Binding TabStripPlacement, RelativeSource={RelativeSource AncestorType={x:Type local:DragablzItem}, AncestorLevel=1}}" Value="Top" />
                             </MultiDataTrigger.Conditions>
                             <Setter Property="BorderThickness" TargetName="innerBorder" Value="1,1,1,0" />
                             <Setter Property="BorderThickness" TargetName="mainBorder" Value="1,1,1,0" />
@@ -1328,7 +1329,7 @@
                             <MultiDataTrigger.Conditions>
                                 <Condition Binding="{Binding IsSelected, RelativeSource={RelativeSource Self}}"
                                            Value="True" />
-                                <Condition Binding="{Binding TabStripPlacement, RelativeSource={RelativeSource AncestorType={x:Type local:TabablzControl}}}" Value="Top" />
+                                <Condition Binding="{Binding TabStripPlacement, RelativeSource={RelativeSource AncestorType={x:Type local:DragablzItem}, AncestorLevel=1}}" Value="Top" />
                             </MultiDataTrigger.Conditions>
                             <Setter Property="Panel.ZIndex" Value="1" />
                             <Setter Property="Margin" Value="0,0,0,-2" />
@@ -1371,7 +1372,7 @@
                                Style="{StaticResource InvisibleThumbStyle}" />
                     </Grid>
                     <ControlTemplate.Triggers>
-                        <Trigger Property="local:TabablzControl.IsWrappingTabItem" Value="True">
+                        <Trigger Property="local:DragablzItem.IsWrappingTabItem" Value="True">
                             <Setter TargetName="contentPresenter" Property="Content" Value="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=DataContext.Header}" />
                         </Trigger>
                         <MultiDataTrigger>
@@ -1573,7 +1574,9 @@
         </Setter>
     </Style>
 
-    <Style TargetType="{x:Type local:TabablzControl}" xmlns:math="http://hexinnovation.com/math">
+    <Style TargetType="{x:Type local:DragablzItem}" 
+           x:Key="TabablzStyle"
+        >
         <Setter Property="Padding" Value="2" />
         <Setter Property="HorizontalContentAlignment" Value="Center" />
         <Setter Property="VerticalContentAlignment" Value="Center" />
@@ -1598,11 +1601,8 @@
         </Setter>
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="{x:Type local:TabablzControl}">
-                    <ControlTemplate.Resources>
+                <ControlTemplate TargetType="{x:Type local:DragablzItem}">
 
-                        <math:MathConverter x:Key="Math" />
-                    </ControlTemplate.Resources>
                     <Grid x:Name="templateRoot" ClipToBounds="true" SnapsToDevicePixels="true" KeyboardNavigation.TabNavigation="Local">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition x:Name="ColumnDefinition0" />
@@ -1682,7 +1682,7 @@
           x:Name="DefaultAddButton"
 
           HorizontalAlignment="Left"
-          Command="{x:Static local:TabablzControl.AddItemCommand}"
+          Command="{x:Static local:DragablzItem.AddItemCommand}"
           Visibility="{TemplateBinding ShowDefaultAddButton, Converter={StaticResource BooleanToVisibilityConverter}}">
                                 </Button>
                             </Border>
@@ -1755,7 +1755,7 @@
                 <Setter Property="ItemContainerStyle" Value="{StaticResource StandardDragablzTabItemVerticalStyle}"></Setter>
                 <Setter Property="Template">
                     <Setter.Value>
-                        <ControlTemplate TargetType="{x:Type local:TabablzControl}">
+                        <ControlTemplate TargetType="{x:Type local:DragablzItem}">
                             <Grid x:Name="templateRoot" ClipToBounds="true" SnapsToDevicePixels="true" KeyboardNavigation.TabNavigation="Local">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition x:Name="ColumnDefinition0" Width="Auto" />
@@ -1807,7 +1807,7 @@
                                     <Button Style="{StaticResource AddItemCommandButtonStyle}"
                                             x:Name="DefaultAddButton"
                                             Grid.Row="2"
-                                            Command="{x:Static local:TabablzControl.AddItemCommand}"
+                                            Command="{x:Static local:DragablzItem.AddItemCommand}"
                                             Visibility="{TemplateBinding ShowDefaultAddButton, Converter={StaticResource BooleanToVisibilityConverter}}" />
 
                                     <ContentPresenter Grid.Row="3" x:Name="SuffixContentControl" ContentSource="SelectedItem" />

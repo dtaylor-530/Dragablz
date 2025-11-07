@@ -10,8 +10,8 @@ namespace Dragablz.Dockablz
         private readonly Branch _branch;
         private readonly BranchAccessor _firstItemBranchAccessor;
         private readonly BranchAccessor _secondItemBranchAccessor;
-        private readonly TabablzControl _firstItemTabablzControl;
-        private readonly TabablzControl _secondItemTabablzControl;
+        private readonly DragablzItem _firstItemTabablzControl;
+        private readonly DragablzItem _secondItemTabablzControl;
 
         public BranchAccessor(Branch branch)
         {
@@ -32,10 +32,10 @@ namespace Dragablz.Dockablz
                 _secondItemTabablzControl = FindTabablzControl(branch.SecondItem, branch.SecondContentPresenter);
         }
 
-        private static TabablzControl FindTabablzControl(object item, DependencyObject contentPresenter)
+        private static DragablzItem FindTabablzControl(object item, DependencyObject contentPresenter)
         {
-            var result = item as TabablzControl;
-            return result ?? contentPresenter.VisualTreeDepthFirstTraversal().OfType<TabablzControl>().FirstOrDefault();
+            var result = item as DragablzItem;
+            return result ?? contentPresenter.VisualTreeDepthFirstTraversal().OfType<DragablzItem>().FirstOrDefault();
         }
 
         public Branch Branch
@@ -53,12 +53,12 @@ namespace Dragablz.Dockablz
             get { return _secondItemBranchAccessor; }
         }
 
-        public TabablzControl FirstItemTabablzControl
+        public DragablzItem FirstItemTabablzControl
         {
             get { return _firstItemTabablzControl; }
         }
 
-        public TabablzControl SecondItemTabablzControl
+        public DragablzItem SecondItemTabablzControl
         {
             get { return _secondItemTabablzControl; }
         }
@@ -74,11 +74,11 @@ namespace Dragablz.Dockablz
         /// <returns></returns>
         public BranchAccessor Visit(BranchItem childItem,
             Action<BranchAccessor> childBranchVisitor = null,
-            Action<TabablzControl> childTabablzControlVisitor = null,
+            Action<DragablzItem> childTabablzControlVisitor = null,
             Action<object> childContentVisitor = null)
         {
             Func<BranchAccessor> branchGetter;
-            Func<TabablzControl> tabGetter;
+            Func<DragablzItem> tabGetter;
             Func<object> contentGetter;
 
             switch (childItem)

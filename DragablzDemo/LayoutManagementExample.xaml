@@ -9,9 +9,9 @@
              d:DesignHeight="300" d:DesignWidth="300"
              d:DataContext="{d:DesignInstance dragablzDemo:LayoutManagementExampleViewModel, IsDesignTimeCreatable=False}">
     <UserControl.Resources>
-        <DataTemplate DataType="{x:Type dragablzDemo:TabablzControlProxy}">
+        <DataTemplate DataType="{x:Type dragablzDemo:DragablzItemProxy}">
             <StackPanel Orientation="Horizontal">
-                <TextBlock>TabablzControl. Operations:</TextBlock>
+                <TextBlock>DragablzItem. Operations:</TextBlock>
                 <Button Command="{Binding SplitHorizontallyCommand}">Split Horizontally</Button>
                 <Button Command="{Binding SplitVerticallyCommand}">Split Vertically</Button>
                 <TextBlock>Ratio:</TextBlock>
@@ -28,8 +28,8 @@
         <Button Command="{Binding QueryLayoutsCommand}">Query Layouts</Button>
         <TreeView Grid.Row="1" ItemsSource="{Binding RootNodes}" x:Name="TreeView">
             <TreeView.Resources>
-                <DataTemplate DataType="{x:Type dragablzDemo:TabablzControlProxy}">
-                    <TextBlock>TabablzControl</TextBlock>
+                <DataTemplate DataType="{x:Type dragablzDemo:DragablzItemProxy}">
+                    <TextBlock>DragablzItem</TextBlock>
                 </DataTemplate>
             </TreeView.Resources>
             <TreeView.ItemContainerStyle>

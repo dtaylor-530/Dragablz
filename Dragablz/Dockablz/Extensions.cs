@@ -30,7 +30,7 @@ namespace Dragablz.Dockablz
             this LayoutAccessor layoutAccessor,
             TContext context,
             Action<TContext, BranchAccessor> branchVisitor = null,
-            Action<TContext, TabablzControl> tabablzControlVisitor = null,
+            Action<TContext, DragablzItem> tabablzControlVisitor = null,
             Action<TContext, object> contentVisitor = null)
         {
             if (layoutAccessor == null) throw new ArgumentNullException("layoutAccessor");
@@ -60,7 +60,7 @@ namespace Dragablz.Dockablz
             TContext context,
             BranchItem childItem,
             Action<TContext, BranchAccessor> branchVisitor = null,
-            Action<TContext, TabablzControl> tabablzControlVisitor = null,
+            Action<TContext, DragablzItem> tabablzControlVisitor = null,
             Action<TContext, object> contentVisitor = null)
         {
             if (branchAccessor == null) throw new ArgumentNullException("branchAccessor");

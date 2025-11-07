@@ -14,7 +14,7 @@
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="pack://application:,,,/Dragablz;component/Themes/Generic.xaml" />
             </ResourceDictionary.MergedDictionaries>
-            <DataTemplate DataType="{x:Type dragablz:HeaderedItemViewModel}">
+            <DataTemplate DataType="{x:Type dragablzDemo:HeaderedItemViewModel}">
                 <ContentControl Content="{Binding Header}" Margin="4 4 4 4" FontSize="14" />
             </DataTemplate>
             <DataTemplate DataType="{x:Type dragablzDemo:CustomHeaderViewModel}">
@@ -26,7 +26,7 @@
                                    x:Key="WindowIcon" x:Shared="False"
                                    ToolTip="Added via the HeaderPrefixContent property" />
 
-            <Style TargetType="{x:Type dragablz:TabablzControl}" x:Key="TabablzControlStyle">
+            <Style TargetType="{x:Type dragablz:DragablzItem}" x:Key="DragablzItemStyle" BasedOn="{StaticResource TabablzStyle}">
                 <Setter Property="NewItemFactory" Value="{x:Static dragablzDemo:BoundExampleNewItem.Factory}" />
                 <Setter Property="ItemsSource" Value="{Binding Items}" />
                 <Setter Property="ClosingItemCallback" Value="{Binding ClosingTabItemHandler}" />
@@ -48,21 +48,21 @@
         <!-- branch template lets dragablz create a new tab control after a window is split via docking -->
         <dockablz:Layout.BranchTemplate>
             <DataTemplate>
-                <dragablz:TabablzControl Style="{StaticResource TabablzControlStyle}">
-                    <dragablz:TabablzControl.InterTabController>
+                <dragablz:DragablzItem Style="{StaticResource DragablzItemStyle}">
+                    <dragablz:DragablzItem.InterTabController>
                         <dragablz:InterTabController InterTabClient="{Binding InterTabClient}" Partition="2AE89D18-F236-4D20-9605-6C03319038E6" />
-                    </dragablz:TabablzControl.InterTabController>
-                </dragablz:TabablzControl>
+                    </dragablz:DragablzItem.InterTabController>
+                </dragablz:DragablzItem>
             </DataTemplate>
         </dockablz:Layout.BranchTemplate>
         <!-- a root, named tab control is needed, so when a tab is torn and a new window is created, the new target tab control can be identified -->
-        <dragablz:TabablzControl x:Name="InitialTabablzControl"
+        <dragablz:DragablzItem x:Name="InitialDragablzItem"
                                  FixedHeaderCount="1"
-                                 Style="{StaticResource TabablzControlStyle}"
+                                 Style="{StaticResource DragablzItemStyle}"
                                  AddLocationHint="After">
-            <dragablz:TabablzControl.InterTabController>
+            <dragablz:DragablzItem.InterTabController>
                 <dragablz:InterTabController InterTabClient="{Binding InterTabClient}" Partition="2AE89D18-F236-4D20-9605-6C03319038E6" />
-            </dragablz:TabablzControl.InterTabController>
-        </dragablz:TabablzControl>
+            </dragablz:DragablzItem.InterTabController>
+        </dragablz:DragablzItem>
     </dockablz:Layout>
 </dragablz:DragablzWindow>

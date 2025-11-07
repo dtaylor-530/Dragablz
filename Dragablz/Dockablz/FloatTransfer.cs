@@ -17,7 +17,7 @@ namespace Dragablz.Dockablz
             _content = content;
         }
 
-        public static FloatTransfer TakeSnapshot(DragablzItem dragablzItem, TabablzControl sourceTabControl)
+        public static FloatTransfer TakeSnapshot(DragablzItem dragablzItem, DragablzItem sourceTabControl)
         {
             if (dragablzItem == null) throw new ArgumentNullException("dragablzItem");
 

@@ -19,21 +19,130 @@ namespace Dragablz
         static DragablzItem()
         {
             DefaultStyleKeyProperty.OverrideMetadata(typeof(DragablzItem), new FrameworkPropertyMetadata(typeof(DragablzItem)));
+            tablablzControl();
         }
 
         public DragablzItem()
         {
         }
 
-        private void ItemContainerGeneratorOnItemsChanged(object sender, ItemsChangedEventArgs itemsChangedEventArgs)
+
+        public void DragablzItemsControl_OnApplyTemplate()
         {
-            //throw new NotImplementedException();
+            ItemContainerGenerator.StatusChanged += ItemContainerGeneratorOnStatusChanged;
+            ItemContainerGenerator.ItemsChanged += ItemContainerGeneratorOnItemsChanged;
+            AddHandler(DragablzItem.XChangedEvent, new RoutedPropertyChangedEventHandler<double>(ItemXChanged));
+            AddHandler(DragablzItem.YChangedEvent, new RoutedPropertyChangedEventHandler<double>(ItemYChanged));
+            AddHandler(DragablzItem.DragDelta, new DragablzDragDeltaEventHandler(ItemDragDelta));
+            AddHandler(DragablzItem.DragCompleted, new DragablzDragCompletedEventHandler(ItemDragCompleted));
+            AddHandler(DragablzItem.DragStarted, new DragablzDragStartedEventHandler(ItemDragStarted));
+            AddHandler(DragablzItem.MouseDownWithinEvent, new DragablzItemEventHandler(ItemMouseDownWithinHandlerTarget));
+
+
+
+            void ItemContainerGeneratorOnItemsChanged(object sender, ItemsChangedEventArgs itemsChangedEventArgs)
+            {
+                //throw new NotImplementedException();
+            }
+
+            void ItemContainerGeneratorOnStatusChanged(object sender, EventArgs eventArgs)
+            {
+                if (ItemContainerGenerator.Status != GeneratorStatus.ContainersGenerated) return;
+
+                InvalidateMeasure();
+                //extra kick
+                Dispatcher.BeginInvoke(new Action(InvalidateMeasure), DispatcherPriority.Loaded);
+            }
+
+            void ItemDragStarted(object sender, DragablzDragStartedEventArgs eventArgs)
+            {
+                if (ItemsOrganiser != null)
+                {
+                    var bounds = new Size(ActualWidth, ActualHeight);
+                    ItemsOrganiser.OrganiseOnDragStarted(this, bounds,
+                        DragablzItems().Except(new[] { eventArgs.DragablzItem }).ToList(),
+                        eventArgs.DragablzItem);
+                }
+                //if(eventArgs.)
+                //eventArgs.Handled = true;
+
+                Dispatcher.BeginInvoke(new Action(InvalidateMeasure), DispatcherPriority.Loaded);
+            }
+
+            void ItemDragCompleted(object sender, DragablzDragCompletedEventArgs eventArgs)
+            {
+                var dragablzItems = DragablzItems()
+                    .Select(i =>
+                    {
+                        i.IsDragging = false;
+                        i.IsSiblingDragging = false;
+                        return i;
+                    })
+                    .ToList();
+
+                if (ItemsOrganiser != null)
+                {
+                    var bounds = new Size(ActualWidth, ActualHeight);
+                    ItemsOrganiser.OrganiseOnDragCompleted(this, bounds,
+                        dragablzItems.Except(eventArgs.DragablzItem),
+                        eventArgs.DragablzItem);
+                }
+
+                //eventArgs.Handled = true;
+
+                //wowsers
+                Dispatcher.BeginInvoke(new Action(InvalidateMeasure));
+                Dispatcher.BeginInvoke(new Action(InvalidateMeasure), DispatcherPriority.Loaded);
+            }
+
+            void ItemDragDelta(object sender, DragablzDragDeltaEventArgs eventArgs)
+            {
+                var bounds = new Size(ItemsPresenterWidth, ItemsPresenterHeight);
+                var desiredLocation = new Point(
+                    eventArgs.DragablzItem.X + eventArgs.DragDeltaEventArgs.HorizontalChange,
+                    eventArgs.DragablzItem.Y + eventArgs.DragDeltaEventArgs.VerticalChange
+                    );
+                if (ItemsOrganiser != null)
+                {
+                    if (FixedItemCount > 0 &&
+                        ItemsOrganiser.Sort(DragablzItems()).Take(FixedItemCount).Contains(eventArgs.DragablzItem))
+                    {
+                        eventArgs.Handled = true;
+                        return;
+                    }
+
+                    desiredLocation = ItemsOrganiser.ConstrainLocation(this, bounds,
+                        new Point(eventArgs.DragablzItem.X, eventArgs.DragablzItem.Y),
+                        new Size(eventArgs.DragablzItem.ActualWidth, eventArgs.DragablzItem.ActualHeight),
+                        desiredLocation, eventArgs.DragablzItem.DesiredSize);
+                }
+
+                foreach (var dragableItem in DragablzItems()
+                    .Except(new[] { eventArgs.DragablzItem })) // how about Linq.Where() ?
+                {
+                    dragableItem.IsSiblingDragging = true;
+                }
+                eventArgs.DragablzItem.IsDragging = true;
+
+                eventArgs.DragablzItem.X = desiredLocation.X;
+                eventArgs.DragablzItem.Y = desiredLocation.Y;
+
+                if (ItemsOrganiser != null)
+                    ItemsOrganiser.OrganiseOnDrag(
+                        this,
+                        bounds,
+                        DragablzItems().Except(new[] { eventArgs.DragablzItem }), eventArgs.DragablzItem);
+
+                eventArgs.DragablzItem.BringIntoView();
+
+                //eventArgs.Handled = true;
+            }
+
         }
 
         protected override void ClearContainerForItemOverride(DependencyObject element, object item)
         {
-            if (ContainerCustomisations != null && ContainerCustomisations.ClearingContainerForItemOverride != null)
-                ContainerCustomisations.ClearingContainerForItemOverride(element, item);
+            ContainerCustomisations?.ClearingContainerForItemOverride(element, item);
 
             base.ClearContainerForItemOverride(element, item);
 
@@ -152,14 +261,7 @@ namespace Dragablz
 
         internal ContainerCustomisations ContainerCustomisations { get; set; }
 
-        private void ItemContainerGeneratorOnStatusChanged(object sender, EventArgs eventArgs)
-        {
-            if (ItemContainerGenerator.Status != GeneratorStatus.ContainersGenerated) return;
 
-            InvalidateMeasure();
-            //extra kick
-            Dispatcher.BeginInvoke(new Action(InvalidateMeasure), DispatcherPriority.Loaded);
-        }
 
         protected override bool IsItemItsOwnContainerOverride(object item)
         {
@@ -171,9 +273,7 @@ namespace Dragablz
 
         protected override DependencyObject GetContainerForItemOverride()
         {
-            var result = ContainerCustomisations != null && ContainerCustomisations.GetContainerForItemOverride != null
-                ? ContainerCustomisations.GetContainerForItemOverride()
-                : new DragablzItem();
+            var result = ContainerCustomisations?.GetContainerForItemOverride() ?? new DragablzItem();
             result.PreviewMouseLeftButtonDown += Result_MouseDown;
             result.SizeChanged += ItemSizeChangedEventHandler;
 
@@ -186,14 +286,14 @@ namespace Dragablz
             selection = sender;
         }
 
-        protected virtual void OnSelectionChanged(SelectionChangedEventArgs sender)
-        {
-        }
+        //protected virtual void OnSelectionChanged(SelectionChangedEventArgs sender)
+        //{
+        //}
 
         protected override void PrepareContainerForItemOverride(DependencyObject element, object item)
         {
-            if (ContainerCustomisations != null && ContainerCustomisations.PrepareContainerForItemOverride != null)
-                ContainerCustomisations.PrepareContainerForItemOverride(element, item);
+
+            ContainerCustomisations?.PrepareContainerForItemOverride(element, item);
 
             base.PrepareContainerForItemOverride(element, item);
         }
@@ -282,96 +382,10 @@ namespace Dragablz
             ItemsOrganiser.Organise(this, new Size(ItemsPresenterWidth, ItemsPresenterHeight), orderedEnumerable);
         }
 
-        internal IEnumerable<DragablzItem> DragablzItems()
-        {
-            return this.Containers<DragablzItem>().ToList();
-        }
+        internal IEnumerable<DragablzItem> DragablzItems() => [.. this.Containers<DragablzItem>()];
 
         internal Size? LockedMeasure { get; set; }
 
-        private void ItemDragStarted(object sender, DragablzDragStartedEventArgs eventArgs)
-        {
-            if (ItemsOrganiser != null)
-            {
-                var bounds = new Size(ActualWidth, ActualHeight);
-                ItemsOrganiser.OrganiseOnDragStarted(this, bounds,
-                    DragablzItems().Except(new[] { eventArgs.DragablzItem }).ToList(),
-                    eventArgs.DragablzItem);
-            }
-            //if(eventArgs.)
-            //eventArgs.Handled = true;
-
-            Dispatcher.BeginInvoke(new Action(InvalidateMeasure), DispatcherPriority.Loaded);
-        }
-
-        private void ItemDragCompleted(object sender, DragablzDragCompletedEventArgs eventArgs)
-        {
-            var dragablzItems = DragablzItems()
-                .Select(i =>
-                {
-                    i.IsDragging = false;
-                    i.IsSiblingDragging = false;
-                    return i;
-                })
-                .ToList();
-
-            if (ItemsOrganiser != null)
-            {
-                var bounds = new Size(ActualWidth, ActualHeight);
-                ItemsOrganiser.OrganiseOnDragCompleted(this, bounds,
-                    dragablzItems.Except(eventArgs.DragablzItem),
-                    eventArgs.DragablzItem);
-            }
-
-            //eventArgs.Handled = true;
-
-            //wowsers
-            Dispatcher.BeginInvoke(new Action(InvalidateMeasure));
-            Dispatcher.BeginInvoke(new Action(InvalidateMeasure), DispatcherPriority.Loaded);
-        }
-
-        private void ItemDragDelta(object sender, DragablzDragDeltaEventArgs eventArgs)
-        {
-            var bounds = new Size(ItemsPresenterWidth, ItemsPresenterHeight);
-            var desiredLocation = new Point(
-                eventArgs.DragablzItem.X + eventArgs.DragDeltaEventArgs.HorizontalChange,
-                eventArgs.DragablzItem.Y + eventArgs.DragDeltaEventArgs.VerticalChange
-                );
-            if (ItemsOrganiser != null)
-            {
-                if (FixedItemCount > 0 &&
-                    ItemsOrganiser.Sort(DragablzItems()).Take(FixedItemCount).Contains(eventArgs.DragablzItem))
-                {
-                    eventArgs.Handled = true;
-                    return;
-                }
-
-                desiredLocation = ItemsOrganiser.ConstrainLocation(this, bounds,
-                    new Point(eventArgs.DragablzItem.X, eventArgs.DragablzItem.Y),
-                    new Size(eventArgs.DragablzItem.ActualWidth, eventArgs.DragablzItem.ActualHeight),
-                    desiredLocation, eventArgs.DragablzItem.DesiredSize);
-            }
-
-            foreach (var dragableItem in DragablzItems()
-                .Except(new[] { eventArgs.DragablzItem })) // how about Linq.Where() ?
-            {
-                dragableItem.IsSiblingDragging = true;
-            }
-            eventArgs.DragablzItem.IsDragging = true;
-
-            eventArgs.DragablzItem.X = desiredLocation.X;
-            eventArgs.DragablzItem.Y = desiredLocation.Y;
-
-            if (ItemsOrganiser != null)
-                ItemsOrganiser.OrganiseOnDrag(
-                    this,
-                    bounds,
-                    DragablzItems().Except(new[] { eventArgs.DragablzItem }), eventArgs.DragablzItem);
-
-            eventArgs.DragablzItem.BringIntoView();
-
-            //eventArgs.Handled = true;
-        }
 
         private void ItemXChanged(object sender, RoutedPropertyChangedEventArgs<double> routedPropertyChangedEventArgs)
         {

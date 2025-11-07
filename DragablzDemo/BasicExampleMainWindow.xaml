@@ -17,10 +17,10 @@
         </ResourceDictionary>
     </Window.Resources>
 
-    <dragablz:TabablzControl Style="{StaticResource BasicExamplesTabStyle}">
-        <dragablz:TabablzControl.InterTabController>
+    <dragablz:DragablzItem Style="{StaticResource BasicExamplesTabStyle}">
+        <dragablz:DragablzItem.InterTabController>
             <dragablz:InterTabController />
-        </dragablz:TabablzControl.InterTabController>
+        </dragablz:DragablzItem.InterTabController>
         <TabItem Header="Basic Examples" IsSelected="True">
             <Grid Margin="8 8 8 8">
                 <Grid.ColumnDefinitions>
@@ -77,27 +77,28 @@
             <TextBlock Margin="8 8 8 8">You can drag tabs around.</TextBlock>
         </TabItem>
         <TabItem Header="Basic bound tabs example">
-            <dragablz:TabablzControl Margin="8 8 8 8" ItemsSource="{Binding ViewModels}"
+            <dragablz:DragablzItem Margin="8 8 8 8" ItemsSource="{Binding ViewModels}"
+                                   Style="{StaticResource TabablzStyle}"
                                      SelectedItem="{Binding SelectedViewModel}">
-                <!--<dragablz:TabablzControl.HeaderSuffixContent>
+                <!--<dragablz:DragablzItem.HeaderSuffixContent>
                     <Button Command="{Binding AddNewViewModel}">+</Button>
-                </dragablz:TabablzControl.HeaderSuffixContent>-->
-                <dragablz:TabablzControl.HeaderTemplate>
+                </dragablz:DragablzItem.HeaderSuffixContent>-->
+                <dragablz:DragablzItem.HeaderTemplate>
                     <DataTemplate DataType="{x:Type dragablzDemo:SimpleViewModel}">
                         <TextBlock Text="{Binding SimpleContent}" />
                     </DataTemplate>
-                </dragablz:TabablzControl.HeaderTemplate>
-                <!--<dragablz:TabablzControl.ItemTemplate>
+                </dragablz:DragablzItem.HeaderTemplate>
+                <!--<dragablz:DragablzItem.ItemTemplate>
                     <DataTemplate DataType="{x:Type dragablzDemo:SimpleViewModel}">
                         <TextBlock Text="{Binding Name}" />
                     </DataTemplate>
-                </dragablz:TabablzControl.ItemTemplate>-->
-                <!--<dragablz:TabablzControl.ItemTemplate>
+                </dragablz:DragablzItem.ItemTemplate>-->
+                <!--<dragablz:DragablzItem.ItemTemplate>
                     <DataTemplate DataType="{x:Type dragablzDemo:SimpleViewModel}">
                         <TextBlock Text="{Binding SimpleContent}" />
                     </DataTemplate>
-                </dragablz:TabablzControl.ItemTemplate>-->
-            </dragablz:TabablzControl>
+                </dragablz:DragablzItem.ItemTemplate>-->
+            </dragablz:DragablzItem>
         </TabItem>
         <TabItem Header="Cool features">
             <Grid>
@@ -126,5 +127,5 @@
                 </dragablz:DragablzItem>
             </Grid>
         </TabItem>
-    </dragablz:TabablzControl>
+    </dragablz:DragablzItem>
 </Window>

@@ -474,20 +474,19 @@ namespace Dragablz
         public override void OnApplyTemplate()
         {
             base.OnApplyTemplate();
-            if (ItemsOrganiser == null)
+            if (InterTabController != null)
+            {
+                TablablzControl_Initialise();
+                return;
+            }
+            else if (ItemsOrganiser == null)
             {
                 AddHandler(MouseDownEvent, new RoutedEventHandler(MouseDownHandler), true);
             }
             else
             {
-                ItemContainerGenerator.StatusChanged += ItemContainerGeneratorOnStatusChanged;
-                ItemContainerGenerator.ItemsChanged += ItemContainerGeneratorOnItemsChanged;
-                AddHandler(DragablzItem.XChangedEvent, new RoutedPropertyChangedEventHandler<double>(ItemXChanged));
-                AddHandler(DragablzItem.YChangedEvent, new RoutedPropertyChangedEventHandler<double>(ItemYChanged));
-                AddHandler(DragablzItem.DragDelta, new DragablzDragDeltaEventHandler(ItemDragDelta));
-                AddHandler(DragablzItem.DragCompleted, new DragablzDragCompletedEventHandler(ItemDragCompleted));
-                AddHandler(DragablzItem.DragStarted, new DragablzDragStartedEventHandler(ItemDragStarted));
-                AddHandler(DragablzItem.MouseDownWithinEvent, new DragablzItemEventHandler(ItemMouseDownWithinHandlerTarget));
+                DragablzItemsControl_OnApplyTemplate();
+                return;
             }
             var thumbAndSubscription = SelectAndSubscribeToThumb();
             _templateSubscriptions.Disposable = thumbAndSubscription.Item2;

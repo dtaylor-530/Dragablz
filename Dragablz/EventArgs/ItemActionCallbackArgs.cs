@@ -3,7 +3,7 @@ using System.Windows;
 
 namespace Dragablz
 {
-    public delegate void ItemActionCallback(ItemActionCallbackArgs<TabablzControl> args);
+    public delegate void ItemActionCallback(ItemActionCallbackArgs<DragablzItem> args);
 
     public class ItemActionCallbackArgs<TOwner> where TOwner : FrameworkElement
     {

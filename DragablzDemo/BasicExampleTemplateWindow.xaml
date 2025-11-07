@@ -8,11 +8,18 @@
         Title="Basic Example Defining Tab Content in XAML" Height="300" Width="300"
         mc:Ignorable="d"
         d:DataContext="{d:DesignInstance dragablzDemo:BasicExampleTemplateModel, IsDesignTimeCreatable=False}">
-    <dragablz:TabablzControl Margin="8 8 8 8"
-                             x:Name="TabablzControl"
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/Dragablz;component/Themes/Generic.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
+    <dragablz:DragablzItem Margin="8 8 8 8"
+                             x:Name="DragablzItem"
                              Style="{StaticResource BasicExamplesTabStyle}">
-        <dragablz:TabablzControl.InterTabController>
+        <dragablz:DragablzItem.InterTabController>
             <dragablz:InterTabController InterTabClient="{Binding InterTabClient}" Partition="{Binding Partition}" />
-        </dragablz:TabablzControl.InterTabController>
-    </dragablz:TabablzControl>
+        </dragablz:DragablzItem.InterTabController>
+    </dragablz:DragablzItem>
 </Window>

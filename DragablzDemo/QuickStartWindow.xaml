@@ -6,30 +6,65 @@
         xmlns:system="clr-namespace:System;assembly=mscorlib"
         Title="Quick Start Window" Height="341" Width="617">
     <Window.Resources>
-        <system:String x:Key="Partition">QuickStart</system:String>
+        <ResourceDictionary>
+            <system:String x:Key="Partition">QuickStart</system:String>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/Dragablz;component/Themes/Generic.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
     </Window.Resources>
+    
     <dockablz:Layout Partition="{StaticResource Partition}">
-        <dragablz:TabablzControl Margin="8" ConsolidateOrphanedItems="True"
-                                 ShowDefaultAddButton="True"
-ShowDefaultCloseButton="True">
-            <dragablz:TabablzControl.InterTabController>
+        <dragablz:DragablzItem Margin="8" ConsolidateOrphanedItems="True"
+                               Style="{StaticResource TabablzStyle}"
+                               ShowDefaultAddButton="True"
+                               ShowDefaultCloseButton="True">
+            <dragablz:DragablzItem.InterTabController>
                 <dragablz:InterTabController Partition="{StaticResource Partition}" />
-            </dragablz:TabablzControl.InterTabController>
-            <dragablz:TabablzControl.ItemTemplate>
+            </dragablz:DragablzItem.InterTabController>
+            <dragablz:DragablzItem.ItemTemplate>
                 <DataTemplate>
                     <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Text="{Binding }"></TextBlock>
                 </DataTemplate>
-            </dragablz:TabablzControl.ItemTemplate>
-            <dragablz:TabablzControl.SelectedItemTemplate>
+            </dragablz:DragablzItem.ItemTemplate>
+            <dragablz:DragablzItem.SelectedItemTemplate>
                 <DataTemplate>
                     <TextBlock HorizontalAlignment="Center" FontSize="36"
                                VerticalAlignment="Center" Text="{Binding }"></TextBlock>
                 </DataTemplate>
-            </dragablz:TabablzControl.SelectedItemTemplate>
+            </dragablz:DragablzItem.SelectedItemTemplate>
             <system:String>Hello World</system:String>
             <system:String>We Have Tearable Tabs!</system:String>
             <system:String>Tab No. 3</system:String>
             <system:String>I feel like an ice cold drink</system:String>
-        </dragablz:TabablzControl>
+        </dragablz:DragablzItem>
+        
+        <!--<dragablz:DragablzItem Margin="8" ConsolidateOrphanedItems="True"
+                                                                         ItemContainerStyle="{StaticResource CustomDragablzItemStyle}"
+                                          
+                                          
+         
+            ShowDefaultAddButton="True"
+                               ShowDefaultCloseButton="True">
+  
+            <dragablz:DragablzItem.ItemsOrganiser>
+                <dragablz:VerticalOrganiser />
+            </dragablz:DragablzItem.ItemsOrganiser>
+            <dragablz:DragablzItem.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Text="{Binding }"></TextBlock>
+                </DataTemplate>
+            </dragablz:DragablzItem.ItemTemplate>
+            <dragablz:DragablzItem.SelectedItemTemplate>
+                <DataTemplate>
+                    <TextBlock HorizontalAlignment="Center" FontSize="36"
+                               VerticalAlignment="Center" Text="{Binding }"></TextBlock>
+                </DataTemplate>
+            </dragablz:DragablzItem.SelectedItemTemplate>
+            <system:String>Hello World</system:String>
+            <system:String>We Have Tearable Tabs!</system:String>
+            <system:String>Tab No. 3</system:String>
+            <system:String>I feel like an ice cold drink</system:String>
+        </dragablz:DragablzItem>-->
     </dockablz:Layout>
 </Window>

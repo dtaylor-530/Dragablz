@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Metadata;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -110,7 +111,7 @@ namespace Dragablz.Dockablz
         /// </summary>
         /// <param name="tabablzControl"></param>
         /// <returns></returns>
-        public static LocationReport Find(TabablzControl tabablzControl)
+        public static LocationReport Find(DragablzItem tabablzControl)
         {
             if (tabablzControl == null) throw new ArgumentNullException("tabablzControl");
 
@@ -125,7 +126,7 @@ namespace Dragablz.Dockablz
         /// <param name="orientation">Direction of split.</param>
         /// <param name="makeSecond">Set to <c>true</c> to make the current tab control push into the right hand or bottom of the split.</param>
         /// <remarks>The tab control to be split must be hosted in a layout control.</remarks>
-        public static BranchResult Branch(TabablzControl tabablzControl, Orientation orientation, bool makeSecond)
+        public static BranchResult Branch(DragablzItem tabablzControl, Orientation orientation, bool makeSecond)
         {
             return Branch(tabablzControl, orientation, makeSecond, .5);
         }
@@ -139,7 +140,7 @@ namespace Dragablz.Dockablz
         /// <param name="makeSecond">Set to <c>true</c> to make the current tab control push into the right hand or bottom of the split.</param>
         /// <param name="firstItemProportion">Sets the proportion of the first tab control, with 0.5 being 50% of available space.</param>
         /// <remarks>The tab control to be split must be hosted in a layout control.  <see cref="Layout.BranchTemplate" /> should be set (typically via XAML).</remarks>
-        public static BranchResult Branch(TabablzControl tabablzControl, Orientation orientation, bool makeSecond, double firstItemProportion)
+        public static BranchResult Branch(DragablzItem tabablzControl, Orientation orientation, bool makeSecond, double firstItemProportion)
         {
             return Branch(tabablzControl, null, orientation, makeSecond, firstItemProportion);
         }
@@ -154,7 +155,7 @@ namespace Dragablz.Dockablz
         /// <param name="makeCurrentSecond">Set to <c>true</c> to make the current tab control push into the right hand or bottom of the split.</param>
         /// <param name="firstItemProportion">Sets the proportion of the first tab control, with 0.5 being 50% of available space.</param>
         /// <remarks>The tab control to be split must be hosted in a layout control. </remarks>
-        public static BranchResult Branch(TabablzControl tabablzControl, TabablzControl newSiblingTabablzControl, Orientation orientation, bool makeCurrentSecond,
+        public static BranchResult Branch(DragablzItem tabablzControl, DragablzItem newSiblingTabablzControl, Orientation orientation, bool makeCurrentSecond,
             double firstItemProportion)
         {
             if (firstItemProportion < 0.0 || firstItemProportion > 1.0) throw new ArgumentOutOfRangeException("firstItemProportion", "Must be >= 0.0 and <= 1.0");
@@ -484,12 +485,12 @@ namespace Dragablz.Dockablz
             }
         }
 
-        private static bool TryGetSourceTabControl(DragablzItem DragablzItem, out TabablzControl tabablzControl)
+        private static bool TryGetSourceTabControl(DragablzItem DragablzItem, out DragablzItem tabablzControl)
         {
             var sourceOfDragItemsControl = ItemsControl.ItemsControlFromItemContainer(DragablzItem) as DragablzItem;
             if (sourceOfDragItemsControl == null) throw new ApplicationException("Unable to determine source items control.");
 
-            tabablzControl = TabablzControl.GetOwnerOfHeaderItems(sourceOfDragItemsControl);
+            tabablzControl = DragablzItem.GetOwnerOfHeaderItems(sourceOfDragItemsControl);
 
             return tabablzControl != null;
         }
@@ -502,7 +503,7 @@ namespace Dragablz.Dockablz
             var sourceOfDragItemsControl = ItemsControl.ItemsControlFromItemContainer(sourceDragablzItem) as DragablzItem;
             if (sourceOfDragItemsControl == null) throw new ApplicationException("Unable to determin source items control.");
 
-            var sourceTabControl = TabablzControl.GetOwnerOfHeaderItems(sourceOfDragItemsControl);
+            var sourceTabControl = DragablzItem.GetOwnerOfHeaderItems(sourceOfDragItemsControl);
             if (sourceTabControl == null) throw new ApplicationException("Unable to determin source tab control.");
 
             var floatingItemSnapShots = sourceTabControl.VisualTreeDepthFirstTraversal()
@@ -540,7 +541,7 @@ namespace Dragablz.Dockablz
                 ((ContentControl)newContent).Dispatcher.BeginInvoke(new Action(() =>
                 {
                     //TODO might need to improve this a bit, make it a bit more declarative for complex trees
-                    var newTabControl = ((ContentControl)newContent).VisualTreeDepthFirstTraversal().OfType<TabablzControl>().FirstOrDefault();
+                    var newTabControl = ((ContentControl)newContent).VisualTreeDepthFirstTraversal().OfType<DragablzItem>().FirstOrDefault();
                     if (newTabControl == null) return;
 
                     newTabControl.DataContext = sourceTabControl.DataContext;
@@ -619,7 +620,7 @@ namespace Dragablz.Dockablz
             return null;
         }
 
-        private static BranchResult Branch(Orientation orientation, double proportion, bool makeSecond, DataTemplate branchTemplate, TabablzControl newSibling, object existingContent, Action<Branch> applier)
+        private static BranchResult Branch(Orientation orientation, double proportion, bool makeSecond, DataTemplate branchTemplate, DragablzItem newSibling, object existingContent, Action<Branch> applier)
         {
             var branchItem = new Branch
             {
@@ -649,12 +650,12 @@ namespace Dragablz.Dockablz
             applier(branchItem);
 
             newContent.Dispatcher.Invoke(new Action(() => { }), DispatcherPriority.Loaded);
-            var newTabablzControl = newContent.VisualTreeDepthFirstTraversal().OfType<TabablzControl>().FirstOrDefault();
+            var newTabablzControl = newContent.VisualTreeDepthFirstTraversal().OfType<DragablzItem>().FirstOrDefault();
             if (newTabablzControl != null) return new BranchResult(branchItem, newTabablzControl);
 
             //let#s be kinf and give WPF an extra change to gen the controls
             newContent.Dispatcher.Invoke(new Action(() => { }), DispatcherPriority.Background);
-            newTabablzControl = newContent.VisualTreeDepthFirstTraversal().OfType<TabablzControl>().FirstOrDefault();
+            newTabablzControl = newContent.VisualTreeDepthFirstTraversal().OfType<DragablzItem>().FirstOrDefault();
 
             if (newTabablzControl == null)
                 throw new ApplicationException("New TabablzControl was not generated inside branch.");
@@ -671,7 +672,7 @@ namespace Dragablz.Dockablz
 
             if (_currentlyOfferedDropZone == null || e.DragablzItem.IsDropTargetFound) return;
 
-            TabablzControl tabablzControl;
+            DragablzItem tabablzControl;
             if (TryGetSourceTabControl(e.DragablzItem, out tabablzControl))
             {
                 if (tabablzControl.Items.Count > 1) return;
@@ -692,7 +693,7 @@ namespace Dragablz.Dockablz
             //remove from source
             var sourceOfDragItemsControl = ItemsControl.ItemsControlFromItemContainer(DragablzItem) as DragablzItem;
             if (sourceOfDragItemsControl == null) throw new ApplicationException("Unable to determin source items control.");
-            var sourceTabControl = TabablzControl.GetOwnerOfHeaderItems(sourceOfDragItemsControl);
+            var sourceTabControl = DragablzItem.GetOwnerOfHeaderItems(sourceOfDragItemsControl);
             layout._floatTransfer = FloatTransfer.TakeSnapshot(DragablzItem, sourceTabControl);
             var floatingItemSnapShots = sourceTabControl.VisualTreeDepthFirstTraversal()
                     .OfType<Layout>()
@@ -899,7 +900,7 @@ namespace Dragablz.Dockablz
 
         private bool IsHostingTab()
         {
-            return this.VisualTreeDepthFirstTraversal().OfType<TabablzControl>()
+            return this.VisualTreeDepthFirstTraversal().OfType<DragablzItem>()
                 .FirstOrDefault(t => t.InterTabController != null && t.InterTabController.Partition == Partition)
                 != null;
         }
@@ -936,7 +937,7 @@ namespace Dragablz.Dockablz
             var DragablzItem = executedRoutedEventArgs.Parameter as DragablzItem;
             if (DragablzItem == null) return;
 
-            var exemplarTabControl = this.VisualTreeDepthFirstTraversal().OfType<TabablzControl>()
+            var exemplarTabControl = this.VisualTreeDepthFirstTraversal().OfType<DragablzItem>()
                 .FirstOrDefault(t => t.InterTabController != null && t.InterTabController.Partition == Partition);
 
             if (exemplarTabControl == null) return;

@@ -25,7 +25,7 @@ namespace Dragablz
     /// </summary>
     [TemplatePart(Name = HeaderItemsControlPartName, Type = typeof(DragablzItem))]
     [TemplatePart(Name = ItemsHolderPartName, Type = typeof(Panel))]
-    public class TabablzControl : DragablzItem
+    public partial class DragablzItem
     {
         /// <summary>
         /// Template part.
@@ -40,15 +40,15 @@ namespace Dragablz
         /// <summary>
         /// Routed command which can be used to close a tab.
         /// </summary>
-        public static RoutedCommand CloseItemCommand = new RoutedUICommand("Close", "Close", typeof(TabablzControl));
+        public static RoutedCommand CloseItemCommand = new RoutedUICommand("Close", "Close", typeof(DragablzItem));
 
         /// <summary>
         /// Routed command which can be used to add a new tab.  See <see cref="NewItemFactory"/>.
         /// </summary>
-        public static RoutedCommand AddItemCommand = new RoutedUICommand("Add", "Add", typeof(TabablzControl));
+        public static RoutedCommand AddItemCommand = new RoutedUICommand("Add", "Add", typeof(DragablzItem));
 
-        private static readonly HashSet<TabablzControl> LoadedInstances = new HashSet<TabablzControl>();
-        private static readonly HashSet<TabablzControl> VisibleInstances = new HashSet<TabablzControl>();
+        private static readonly HashSet<DragablzItem> LoadedInstances = new HashSet<DragablzItem>();
+        private static readonly HashSet<DragablzItem> VisibleInstances = new HashSet<DragablzItem>();
 
         private Panel _itemsHolder;
         private TabHeaderDragStartInformation _tabHeaderDragStartInformation;
@@ -58,36 +58,195 @@ namespace Dragablz
 
         private InterTabTransfer _interTabTransfer;
 
-        static TabablzControl()
+        static void tablablzControl()
         {
-            DefaultStyleKeyProperty.OverrideMetadata(typeof(TabablzControl), new FrameworkPropertyMetadata(typeof(TabablzControl)));
-            CommandManager.RegisterClassCommandBinding(typeof(FrameworkElement), new CommandBinding(CloseItemCommand, CloseItemClassHandler, CloseItemCanExecuteClassHandler));
+            //DefaultStyleKeyProperty.OverrideMetadata(typeof(DragablzItem), new FrameworkPropertyMetadata(typeof(DragablzItem)));
+ 
         }
 
         /// <summary>
         /// Default constructor.
         /// </summary>
-        public TabablzControl()
+        public void TablablzControl_Initialise()
         {
             AddHandler(DragablzItem.DragStarted, new DragablzDragStartedEventHandler(ItemDragStarted), true);
             AddHandler(DragablzItem.PreviewDragDelta, new DragablzDragDeltaEventHandler(PreviewItemDragDelta), true);
             AddHandler(DragablzItem.DragDelta, new DragablzDragDeltaEventHandler(ItemDragDelta), true);
             AddHandler(DragablzItem.DragCompleted, new DragablzDragCompletedEventHandler(ItemDragCompleted), true);
             CommandBindings.Add(new CommandBinding(AddItemCommand, AddItemHandler));
+            CommandManager.RegisterClassCommandBinding(typeof(FrameworkElement), new CommandBinding(CloseItemCommand, CloseItemClassHandler, CloseItemCanExecuteClassHandler));
 
             Loaded += OnLoaded;
             Unloaded += OnUnloaded;
             IsVisibleChanged += OnIsVisibleChanged;
+            onAppplyTemplate();
+            DragablzItemsControl_OnApplyTemplate();
+
+            void ItemDragStarted(object sender, DragablzDragStartedEventArgs e)
+            {
+                if (!IsMyItem(e.DragablzItem)) return;
+
+                //the thumb may steal the user selection, so we will try and apply it manually
+
+                e.DragablzItem.IsDropTargetFound = false;
+
+                var sourceOfDragItemsControl = ItemsControlFromItemContainer(e.DragablzItem) as DragablzItem;
+                if (sourceOfDragItemsControl == null || !Equals(sourceOfDragItemsControl, this)) return;
+
+                var itemsControlOffset = Mouse.GetPosition(this);
+                _tabHeaderDragStartInformation = new TabHeaderDragStartInformation(e.DragablzItem, itemsControlOffset.X,
+                    itemsControlOffset.Y, e.DragStartedEventArgs.HorizontalOffset, e.DragStartedEventArgs.VerticalOffset);
+
+                foreach (var otherItem in Dragablz.Core.Extensions.Containers<DragablzItem>(this).Except(e.DragablzItem))
+                    otherItem.IsSelected = false;
+                e.DragablzItem.IsSelected = true;
+                e.DragablzItem.PartitionAtDragStart = InterTabController?.Partition;
+                var item = ItemContainerGenerator.ItemFromContainer(e.DragablzItem);
+                (item as TabItem)?.IsSelected = true;
+                SelectedItem = item;
+
+                if (ShouldDragWindow(sourceOfDragItemsControl))
+                    IsDraggingWindow = true;
+            }
+
+            void PreviewItemDragDelta(object sender, DragablzDragDeltaEventArgs e)
+            {
+                if (ItemsControlFromItemContainer(e.DragablzItem) is not DragablzItem sourceOfDragItemsControl || !Equals(sourceOfDragItemsControl, this)) 
+                    return;
+
+                if (!ShouldDragWindow(sourceOfDragItemsControl)) 
+                    return;
+
+                if (MonitorReentry(e)) 
+                    return;
+
+                if (Window.GetWindow(this) == null) 
+                    return;
+
+                if (_interTabTransfer != null)
+                {
+                    var cursorPos = Native.GetCursorPos().ToWpf();
+                    if (_interTabTransfer.BreachOrientation == Orientation.Vertical)
+                    {
+                        var vector = cursorPos - _interTabTransfer.DragStartWindowOffset;
+                        Window.GetWindow(this).Left = vector.X;
+                        Window.GetWindow(this).Top = vector.Y;
+                    }
+                    else
+                    {
+                        var offset = e.DragablzItem.TranslatePoint(_interTabTransfer.OriginatorContainer.MouseAtDragStart, Window.GetWindow(this));
+                        var borderVector = Window.GetWindow(this).PointToScreen(new Point()).ToWpf() - new Point(Window.GetWindow(this).Left, Window.GetWindow(this).Top);
+                        offset.Offset(borderVector.X, borderVector.Y);
+                        Window.GetWindow(this).Left = cursorPos.X - offset.X;
+                        Window.GetWindow(this).Top = cursorPos.Y - offset.Y;
+                    }
+                }
+                else
+                {
+                    Window.GetWindow(this).Left += e.DragDeltaEventArgs.HorizontalChange;
+                    Window.GetWindow(this).Top += e.DragDeltaEventArgs.VerticalChange;
+                }
+
+                e.Handled = true;
+            }
+
+            void ItemDragCompleted(object sender, DragablzDragCompletedEventArgs e)
+            {
+                if (!IsMyItem(e.DragablzItem)) return;
+
+                _interTabTransfer = null;
+                LockedMeasure = null;
+                IsDraggingWindow = false;
+            }
+
+            void ItemDragDelta(object sender, DragablzDragDeltaEventArgs e)
+            {
+                if (!IsMyItem(e.DragablzItem)) return;
+                if (FixedHeaderCount > 0 &&
+                    ItemsOrganiser.Sort(DragablzItems())
+                        .Take(FixedHeaderCount)
+                        .Contains(e.DragablzItem))
+                    return;
+
+                if (_tabHeaderDragStartInformation == null ||
+                    !Equals(_tabHeaderDragStartInformation.DragItem, e.DragablzItem) || InterTabController == null) return;
+
+                if (InterTabController.InterTabClient == null)
+                    throw new InvalidOperationException("An InterTabClient must be provided on an InterTabController.");
+
+                MonitorBreach(e);
+            }
+
+            /// <summary>
+            /// Called when <see cref="M:System.Windows.FrameworkElement.ApplyTemplate"/> is called.
+            /// </summary>
+            void onAppplyTemplate()
+            {
+                _templateSubscription?.Dispose();
+                _templateSubscription = Disposable.Empty;
+
+                ItemContainerGenerator.StatusChanged += ItemContainerGeneratorOnStatusChanged;
+                _templateSubscription =
+                    Disposable.Create(
+                        () =>
+                            ItemContainerGenerator.StatusChanged -=
+                                ItemContainerGeneratorOnStatusChanged);
+
+                ContainerCustomisations = new ContainerCustomisations(null, PrepareChildContainerForItemOverride);
+
+                if (SelectedItem == null)
+                    SetCurrentValue(SelectedItemProperty, Items.OfType<object>().FirstOrDefault());
+
+                _itemsHolder = GetTemplateChild(ItemsHolderPartName) as Panel;
+                UpdateSelectedItem();
+                MarkWrappedTabItems();
+                MarkInitialSelection();
+
+                base.OnApplyTemplate();
+
+                void ItemContainerGeneratorOnStatusChanged(object sender, EventArgs eventArgs)
+                {
+                    MarkWrappedTabItems();
+                    MarkInitialSelection();
+                }
+
+
+            }
+            void OnLoaded(object sender, RoutedEventArgs routedEventArgs)
+            {
+                LoadedInstances.Add(this);
+                var window = Window.GetWindow(this);
+                if (window == null) return;
+                window.Closing += WindowOnClosing;
+                _windowSubscription.Disposable = Disposable.Create(() => window.Closing -= WindowOnClosing);
+                           
+
+            }
+
+            static void OnIsVisibleChanged(object sender, DependencyPropertyChangedEventArgs dependencyPropertyChangedEventArgs)
+            {
+                var DragablzItem = (DragablzItem)sender;
+                if (DragablzItem.IsVisible)
+                    VisibleInstances.Add(DragablzItem);
+                else if (VisibleInstances.Contains(DragablzItem))
+                    VisibleInstances.Remove(DragablzItem);
+            }
+            void OnUnloaded(object sender, RoutedEventArgs routedEventArgs)
+            {
+                _windowSubscription.Disposable = Disposable.Empty;
+                LoadedInstances.Remove(this);
+            }
+
         }
 
         public static readonly DependencyProperty CustomHeaderItemStyleProperty = DependencyProperty.Register(
-            "CustomHeaderItemStyle", typeof(Style), typeof(TabablzControl), new PropertyMetadata(default(Style)));
+            "CustomHeaderItemStyle", typeof(Style), typeof(DragablzItem), new PropertyMetadata(default(Style)));
 
         /// <summary>
         /// Helper method which returns all the currently loaded instances.
         /// </summary>
         /// <returns></returns>
-        public static IEnumerable<TabablzControl> GetLoadedInstances()
+        public static IEnumerable<DragablzItem> GetLoadedInstances()
         {
             return LoadedInstances.Union(VisibleInstances).Distinct().ToList();
         }
@@ -97,7 +256,7 @@ namespace Dragablz
         /// </summary>
         /// <remarks>
         /// In MVVM scenarios where you don't want to bind the routed command to your ViewModel,
-        /// with this helper method and embedding the TabablzControl in a UserControl, you can keep
+        /// with this helper method and embedding the DragablzItem in a UserControl, you can keep
         /// the View-specific dependencies out of the ViewModel.
         /// </remarks>
         /// <param name="tabContentItem">An existing Tab item content (a ViewModel in MVVM scenarios) which is backing a tab control</param>
@@ -105,12 +264,12 @@ namespace Dragablz
         {
             if (tabContentItem == null) return; //Do nothing.
 
-            //Find all loaded TabablzControl instances with tabs backed by this item and close them
+            //Find all loaded DragablzItem instances with tabs backed by this item and close them
             foreach (var tabWithItemContent in
                 GetLoadedInstances().SelectMany(tc =>
                 tc.DragablzItems().Where(di => di.Header.Equals(tabContentItem)).Select(di => new { tc, di })))
             {
-                TabablzControl.CloseItem(tabWithItemContent.di, tabWithItemContent.tc);
+                DragablzItem.CloseItem(tabWithItemContent.di, tabWithItemContent.tc);
             }
         }
 
@@ -168,7 +327,7 @@ namespace Dragablz
 
         // Using a DependencyProperty as the backing store for SelectedItem.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty SelectedItemProperty =
-            DependencyProperty.Register(nameof(SelectedItem), typeof(object), typeof(TabablzControl), new PropertyMetadata());
+            DependencyProperty.Register(nameof(SelectedItem), typeof(object), typeof(DragablzItem), new PropertyMetadata());
 
         public DataTemplate SelectedItemTemplate
         {
@@ -178,7 +337,7 @@ namespace Dragablz
 
         // Using a DependencyProperty as the backing store for SelectedItemTemplate.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty SelectedItemTemplateProperty =
-            DependencyProperty.Register(nameof(SelectedItemTemplate), typeof(DataTemplate), typeof(TabablzControl), new PropertyMetadata());
+            DependencyProperty.Register(nameof(SelectedItemTemplate), typeof(DataTemplate), typeof(DragablzItem), new PropertyMetadata());
 
         public DataTemplateSelector SelectedItemTemplateSelector
         {
@@ -187,14 +346,14 @@ namespace Dragablz
         }
 
         public static readonly DependencyProperty SelectedItemTemplateSelectorProperty =
-            DependencyProperty.Register(nameof(SelectedItemTemplateSelector), typeof(DataTemplateSelector), typeof(TabablzControl), new PropertyMetadata());
+            DependencyProperty.Register(nameof(SelectedItemTemplateSelector), typeof(DataTemplateSelector), typeof(DragablzItem), new PropertyMetadata());
 
         public static readonly DependencyProperty ShowDefaultCloseButtonProperty = DependencyProperty.Register(
-            "ShowDefaultCloseButton", typeof(bool), typeof(TabablzControl), new PropertyMetadata(default(bool)));
+            "ShowDefaultCloseButton", typeof(bool), typeof(DragablzItem), new PropertyMetadata(default(bool)));
 
         /// <summary>
         /// Indicates whether a default close button should be displayed.  If manually templating the tab header content the close command
-        /// can be called by executing the <see cref="TabablzControl.CloseItemCommand"/> command (typically via a <see cref="Button"/>).
+        /// can be called by executing the <see cref="DragablzItem.CloseItemCommand"/> command (typically via a <see cref="Button"/>).
         /// </summary>
         public bool ShowDefaultCloseButton
         {
@@ -203,7 +362,7 @@ namespace Dragablz
         }
 
         public static readonly DependencyProperty ShowDefaultAddButtonProperty = DependencyProperty.Register(
-            "ShowDefaultAddButton", typeof(bool), typeof(TabablzControl), new PropertyMetadata(default(bool)));
+            "ShowDefaultAddButton", typeof(bool), typeof(DragablzItem), new PropertyMetadata(default(bool)));
 
         /// <summary>
         /// Indicates whether a default add button should be displayed.  Alternately an add button
@@ -217,7 +376,7 @@ namespace Dragablz
         }
 
         public static readonly DependencyProperty IsHeaderPanelVisibleProperty = DependencyProperty.Register(
-            "IsHeaderPanelVisible", typeof(bool), typeof(TabablzControl), new PropertyMetadata(true));
+            "IsHeaderPanelVisible", typeof(bool), typeof(DragablzItem), new PropertyMetadata(true));
 
         /// <summary>
         /// Indicates wither the heaeder panel is visible.  Default is <c>true</c>.
@@ -229,7 +388,7 @@ namespace Dragablz
         }
 
         public static readonly DependencyProperty AddLocationHintProperty = DependencyProperty.Register(
-            "AddLocationHint", typeof(AddLocationHint), typeof(TabablzControl), new PropertyMetadata(AddLocationHint.Last));
+            "AddLocationHint", typeof(AddLocationHint), typeof(DragablzItem), new PropertyMetadata(AddLocationHint.Last));
 
         /// <summary>
         /// Gets or sets the location to add new tab items in the header.
@@ -245,7 +404,7 @@ namespace Dragablz
         }
 
         public static readonly DependencyProperty FixedHeaderCountProperty = DependencyProperty.Register(
-            "FixedHeaderCount", typeof(int), typeof(TabablzControl), new PropertyMetadata(default(int)));
+            "FixedHeaderCount", typeof(int), typeof(DragablzItem), new PropertyMetadata(default(int)));
 
         /// <summary>
         /// Allows a the first adjacent tabs to be fixed (no dragging, and default close button will not show).
@@ -257,11 +416,11 @@ namespace Dragablz
         }
 
         public static readonly DependencyProperty InterTabControllerProperty = DependencyProperty.Register(
-            "InterTabController", typeof(InterTabController), typeof(TabablzControl), new PropertyMetadata(null, InterTabControllerPropertyChangedCallback));
+            "InterTabController", typeof(InterTabController), typeof(DragablzItem), new PropertyMetadata(null, InterTabControllerPropertyChangedCallback));
 
         private static void InterTabControllerPropertyChangedCallback(DependencyObject dependencyObject, DependencyPropertyChangedEventArgs dependencyPropertyChangedEventArgs)
         {
-            var instance = (TabablzControl)dependencyObject;
+            var instance = (DragablzItem)dependencyObject;
             if (dependencyPropertyChangedEventArgs.OldValue != null)
                 instance.RemoveLogicalChild(dependencyPropertyChangedEventArgs.OldValue);
             if (dependencyPropertyChangedEventArgs.NewValue != null)
@@ -282,7 +441,7 @@ namespace Dragablz
         /// Allows a factory to be provided for generating new items. Typically used in conjunction with <see cref="AddItemCommand"/>.
         /// </summary>
         public static readonly DependencyProperty NewItemFactoryProperty = DependencyProperty.Register(
-            "NewItemFactory", typeof(Func<object>), typeof(TabablzControl), new PropertyMetadata(default(Func<object>)));
+            "NewItemFactory", typeof(Func<object>), typeof(DragablzItem), new PropertyMetadata(default(Func<object>)));
 
         /// <summary>
         /// Allows a factory to be provided for generating new items. Typically used in conjunction with <see cref="AddItemCommand"/>.
@@ -295,7 +454,7 @@ namespace Dragablz
 
         private static readonly DependencyPropertyKey IsEmptyPropertyKey =
             DependencyProperty.RegisterReadOnly(
-                "IsEmpty", typeof(bool), typeof(TabablzControl),
+                "IsEmpty", typeof(bool), typeof(DragablzItem),
                 new PropertyMetadata(true, OnIsEmptyChanged));
 
         /// <summary>
@@ -321,7 +480,7 @@ namespace Dragablz
                 "IsEmptyChanged",
                 RoutingStrategy.Bubble,
                 typeof(RoutedPropertyChangedEventHandler<bool>),
-                typeof(TabablzControl));
+                typeof(DragablzItem));
 
         /// <summary>
         /// Event handler to list to <see cref="IsEmptyChangedEvent"/>.
@@ -335,7 +494,7 @@ namespace Dragablz
         private static void OnIsEmptyChanged(
             DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            var instance = d as TabablzControl;
+            var instance = d as DragablzItem;
             var args = new RoutedPropertyChangedEventArgs<bool>(
                 (bool)e.OldValue,
                 (bool)e.NewValue)
@@ -347,7 +506,7 @@ namespace Dragablz
         /// Optionally allows a close item hook to be bound in.  If this propety is provided, the func must return true for the close to continue.
         /// </summary>
         public static readonly DependencyProperty ClosingItemCallbackProperty = DependencyProperty.Register(
-            "ClosingItemCallback", typeof(ItemActionCallback), typeof(TabablzControl), new PropertyMetadata(default(ItemActionCallback)));
+            "ClosingItemCallback", typeof(ItemActionCallback), typeof(DragablzItem), new PropertyMetadata(default(ItemActionCallback)));
 
         /// <summary>
         /// Optionally allows a close item hook to be bound in.  If this propety is provided, the func must return true for the close to continue.
@@ -364,7 +523,7 @@ namespace Dragablz
         /// this behaviour on a per tab item basis by providing <see cref="ConsolidatingOrphanedItemCallback" />.
         /// </summary>
         public static readonly DependencyProperty ConsolidateOrphanedItemsProperty = DependencyProperty.Register(
-            "ConsolidateOrphanedItems", typeof(bool), typeof(TabablzControl), new PropertyMetadata(default(bool)));
+            "ConsolidateOrphanedItems", typeof(bool), typeof(DragablzItem), new PropertyMetadata(default(bool)));
 
         /// <summary>
         /// Set to <c>true</c> to have tabs automatically be moved to another tab is a window is closed, so that they arent lost.
@@ -383,7 +542,7 @@ namespace Dragablz
         /// instance.
         /// </summary>
         public static readonly DependencyProperty ConsolidatingOrphanedItemCallbackProperty = DependencyProperty.Register(
-            "ConsolidatingOrphanedItemCallback", typeof(ItemActionCallback), typeof(TabablzControl), new PropertyMetadata(default(ItemActionCallback)));
+            "ConsolidatingOrphanedItemCallback", typeof(ItemActionCallback), typeof(DragablzItem), new PropertyMetadata(default(ItemActionCallback)));
 
         /// <summary>
         /// Assuming <see cref="ConsolidateOrphanedItems"/> is set to <c>true</c>, consolidation of individual
@@ -398,7 +557,7 @@ namespace Dragablz
 
         private static readonly DependencyPropertyKey IsDraggingWindowPropertyKey =
             DependencyProperty.RegisterReadOnly(
-                "IsDraggingWindow", typeof(bool), typeof(TabablzControl),
+                "IsDraggingWindow", typeof(bool), typeof(DragablzItem),
                 new PropertyMetadata(default(bool), OnIsDraggingWindowChanged));
 
         /// <summary>
@@ -426,7 +585,7 @@ namespace Dragablz
                 "IsDraggingWindowChanged",
                 RoutingStrategy.Bubble,
                 typeof(RoutedPropertyChangedEventHandler<bool>),
-                typeof(TabablzControl));
+                typeof(DragablzItem));
 
         /// <summary>
         /// Event indicating <see cref="IsDraggingWindow"/> has changed.
@@ -440,7 +599,7 @@ namespace Dragablz
         private static void OnIsDraggingWindowChanged(
             DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            var instance = (TabablzControl)d;
+            var instance = (DragablzItem)d;
             var args = new RoutedPropertyChangedEventArgs<bool>(
                 (bool)e.OldValue,
                 (bool)e.NewValue)
@@ -454,7 +613,7 @@ namespace Dragablz
         /// Temporarily set by the framework if a users drag opration causes a Window to close (e.g if a tab is dragging into another tab).
         /// </summary>
         public static readonly DependencyProperty IsClosingAsPartOfDragOperationProperty = DependencyProperty.RegisterAttached(
-            "IsClosingAsPartOfDragOperation", typeof(bool), typeof(TabablzControl), new FrameworkPropertyMetadata(default(bool), FrameworkPropertyMetadataOptions.NotDataBindable));
+            "IsClosingAsPartOfDragOperation", typeof(bool), typeof(DragablzItem), new FrameworkPropertyMetadata(default(bool), FrameworkPropertyMetadataOptions.NotDataBindable));
 
         internal static void SetIsClosingAsPartOfDragOperation(Window element, bool value)
         {
@@ -476,7 +635,7 @@ namespace Dragablz
         /// Provide a hint for how the header should size itself if there are no tabs left (and a Window is still open).
         /// </summary>
         public static readonly DependencyProperty EmptyHeaderSizingHintProperty = DependencyProperty.Register(
-            "EmptyHeaderSizingHint", typeof(EmptyHeaderSizingHint), typeof(TabablzControl), new PropertyMetadata(default(EmptyHeaderSizingHint)));
+            "EmptyHeaderSizingHint", typeof(EmptyHeaderSizingHint), typeof(DragablzItem), new PropertyMetadata(default(EmptyHeaderSizingHint)));
 
         /// <summary>
         /// Provide a hint for how the header should size itself if there are no tabs left (and a Window is still open).
@@ -488,7 +647,7 @@ namespace Dragablz
         }
 
         public static readonly DependencyProperty IsWrappingTabItemProperty = DependencyProperty.RegisterAttached(
-            "IsWrappingTabItem", typeof(bool), typeof(TabablzControl), new PropertyMetadata(default(bool)));
+            "IsWrappingTabItem", typeof(bool), typeof(DragablzItem), new PropertyMetadata(default(bool)));
 
         internal static void SetIsWrappingTabItem(DependencyObject element, bool value)
         {
@@ -508,7 +667,7 @@ namespace Dragablz
 
         // Using a DependencyProperty as the backing store for TabStripPlacement.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty TabStripPlacementProperty =
-            DependencyProperty.Register(nameof(TabStripPlacement), typeof(Dock), typeof(TabablzControl), new PropertyMetadata(Dock.Top));
+            DependencyProperty.Register(nameof(TabStripPlacement), typeof(Dock), typeof(DragablzItem), new PropertyMetadata(Dock.Top));
 
         #endregion properties
 
@@ -564,44 +723,17 @@ namespace Dragablz
         /// Gets the header items, ordered according to their current visual position in the tab header.
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<DragablzItem> GetOrderedHeaders()
-        {
-            return ItemsOrganiser.Sort(DragablzItems());
-        }
+        //public IEnumerable<DragablzItem> GetOrderedHeaders()
+        //{
+        //    return ItemsOrganiser.Sort(DragablzItems());
+        //}
 
-        /// <summary>
-        /// Called when <see cref="M:System.Windows.FrameworkElement.ApplyTemplate"/> is called.
-        /// </summary>
-        public override void OnApplyTemplate()
-        {
-            _templateSubscription?.Dispose();
-            _templateSubscription = Disposable.Empty;
-
-            ItemContainerGenerator.StatusChanged += ItemContainerGeneratorOnStatusChanged;
-            _templateSubscription =
-                Disposable.Create(
-                    () =>
-                        ItemContainerGenerator.StatusChanged -=
-                            ItemContainerGeneratorOnStatusChanged);
-
-            ContainerCustomisations = new ContainerCustomisations(null, PrepareChildContainerForItemOverride);
-
-            if (SelectedItem == null)
-                SetCurrentValue(SelectedItemProperty, Items.OfType<object>().FirstOrDefault());
-
-            _itemsHolder = GetTemplateChild(ItemsHolderPartName) as Panel;
-            UpdateSelectedItem();
-            MarkWrappedTabItems();
-            MarkInitialSelection();
-
-            base.OnApplyTemplate();
-        }
 
         /// <summary>
         /// update the visible child in the ItemsHolder
         /// </summary>
         /// <param name="e"></param>
-        protected override void OnSelectionChanged(SelectionChangedEventArgs e)
+        protected virtual void OnSelectionChanged(SelectionChangedEventArgs e)
         {
             if (e.RemovedItems.Count > 0 && e.AddedItems.Count > 0)
                 _previousSelection = new WeakReference(e.RemovedItems[0]);
@@ -609,21 +741,21 @@ namespace Dragablz
             //base.OnSelectionChanged(e);
             //UpdateSelectedItem();
 
-            Func<IList, IEnumerable<DragablzItem>> notTabItems =
-                l =>
-                    l.Cast<object>()
-                        .Where(o => !(o is TabItem))
-                        .Select(o => o is DragablzItem ? o : ItemContainerGenerator.ContainerFromItem(o))
-                        .OfType<DragablzItem>();
-            foreach (var addedItem in notTabItems(e.AddedItems))
+
+            foreach (var addedItem in items(e.AddedItems))
             {
                 addedItem.IsSelected = true;
                 addedItem.BringIntoView();
             }
-            foreach (var removedItem in notTabItems(e.RemovedItems))
+            foreach (var removedItem in items(e.RemovedItems))
             {
                 removedItem.IsSelected = false;
             }
+
+            IEnumerable<DragablzItem> items(IList l) =>
+                l.Cast<object>()
+                .Select(o => o is DragablzItem ? o : ItemContainerGenerator.ContainerFromItem(o))
+                .OfType<DragablzItem>();
         }
 
         /// <summary>
@@ -740,28 +872,14 @@ namespace Dragablz
             return new FrameworkElementAutomationPeer(this);
         }
 
-        internal static TabablzControl GetOwnerOfHeaderItems(DragablzItem itemsControl)
+        internal static DragablzItem GetOwnerOfHeaderItems(DragablzItem itemsControl)
         {
             return LoadedInstances.FirstOrDefault(t => Equals(t, itemsControl));
         }
 
-        private static void OnIsVisibleChanged(object sender, DependencyPropertyChangedEventArgs dependencyPropertyChangedEventArgs)
-        {
-            var tabablzControl = (TabablzControl)sender;
-            if (tabablzControl.IsVisible)
-                VisibleInstances.Add(tabablzControl);
-            else if (VisibleInstances.Contains(tabablzControl))
-                VisibleInstances.Remove(tabablzControl);
-        }
 
-        private void OnLoaded(object sender, RoutedEventArgs routedEventArgs)
-        {
-            LoadedInstances.Add(this);
-            var window = Window.GetWindow(this);
-            if (window == null) return;
-            window.Closing += WindowOnClosing;
-            _windowSubscription.Disposable = Disposable.Create(() => window.Closing -= WindowOnClosing);
-        }
+
+
 
         private void WindowOnClosing(object sender, CancelEventArgs cancelEventArgs)
         {
@@ -777,7 +895,7 @@ namespace Dragablz
                     orphanedItems.Where(
                         di =>
                         {
-                            var args = new ItemActionCallbackArgs<TabablzControl>(window, this, di);
+                            var args = new ItemActionCallbackArgs<DragablzItem>(window, this, di);
                             ConsolidatingOrphanedItemCallback(args);
                             return !args.IsCancelled;
                         }).ToList();
@@ -798,11 +916,6 @@ namespace Dragablz
             }
         }
 
-        private void OnUnloaded(object sender, RoutedEventArgs routedEventArgs)
-        {
-            _windowSubscription.Disposable = Disposable.Empty;
-            LoadedInstances.Remove(this);
-        }
 
         private void MarkWrappedTabItems()
         {
@@ -834,34 +947,7 @@ namespace Dragablz
             containerFromItem?.SetCurrentValue(DragablzItem.IsSelectedProperty, true);
         }
 
-        private void ItemDragStarted(object sender, DragablzDragStartedEventArgs e)
-        {
-            if (!IsMyItem(e.DragablzItem)) return;
 
-            //the thumb may steal the user selection, so we will try and apply it manually
-
-            e.DragablzItem.IsDropTargetFound = false;
-
-            var sourceOfDragItemsControl = ItemsControlFromItemContainer(e.DragablzItem) as DragablzItem;
-            if (sourceOfDragItemsControl == null || !Equals(sourceOfDragItemsControl, this)) return;
-
-            var itemsControlOffset = Mouse.GetPosition(this);
-            _tabHeaderDragStartInformation = new TabHeaderDragStartInformation(e.DragablzItem, itemsControlOffset.X,
-                itemsControlOffset.Y, e.DragStartedEventArgs.HorizontalOffset, e.DragStartedEventArgs.VerticalOffset);
-
-            foreach (var otherItem in Dragablz.Core.Extensions.Containers<DragablzItem>(this).Except(e.DragablzItem))
-                otherItem.IsSelected = false;
-            e.DragablzItem.IsSelected = true;
-            e.DragablzItem.PartitionAtDragStart = InterTabController?.Partition;
-            var item = ItemContainerGenerator.ItemFromContainer(e.DragablzItem);
-            var tabItem = item as TabItem;
-            if (tabItem != null)
-                tabItem.IsSelected = true;
-            SelectedItem = item;
-
-            if (ShouldDragWindow(sourceOfDragItemsControl))
-                IsDraggingWindow = true;
-        }
 
         private bool ShouldDragWindow(DragablzItem sourceOfDragItemsControl)
         {
@@ -870,57 +956,20 @@ namespace Dragablz
                     && !Layout.IsContainedWithinBranch(sourceOfDragItemsControl));
         }
 
-        private void PreviewItemDragDelta(object sender, DragablzDragDeltaEventArgs e)
-        {
-            var sourceOfDragItemsControl = ItemsControlFromItemContainer(e.DragablzItem) as DragablzItem;
-            if (sourceOfDragItemsControl == null || !Equals(sourceOfDragItemsControl, this)) return;
 
-            if (!ShouldDragWindow(sourceOfDragItemsControl)) return;
-
-            if (MonitorReentry(e)) return;
-
-            var myWindow = Window.GetWindow(this);
-            if (myWindow == null) return;
-
-            if (_interTabTransfer != null)
-            {
-                var cursorPos = Native.GetCursorPos().ToWpf();
-                if (_interTabTransfer.BreachOrientation == Orientation.Vertical)
-                {
-                    var vector = cursorPos - _interTabTransfer.DragStartWindowOffset;
-                    myWindow.Left = vector.X;
-                    myWindow.Top = vector.Y;
-                }
-                else
-                {
-                    var offset = e.DragablzItem.TranslatePoint(_interTabTransfer.OriginatorContainer.MouseAtDragStart, myWindow);
-                    var borderVector = myWindow.PointToScreen(new Point()).ToWpf() - new Point(myWindow.Left, myWindow.Top);
-                    offset.Offset(borderVector.X, borderVector.Y);
-                    myWindow.Left = cursorPos.X - offset.X;
-                    myWindow.Top = cursorPos.Y - offset.Y;
-                }
-            }
-            else
-            {
-                myWindow.Left += e.DragDeltaEventArgs.HorizontalChange;
-                myWindow.Top += e.DragDeltaEventArgs.VerticalChange;
-            }
-
-            e.Handled = true;
-        }
 
         /// <summary>
         /// the vertical/horizontal limits for separating a tab from its container when being moved
         /// </summary>
         /// <param name="tc"></param>
         /// <returns></returns>
-        public Point popTheshold(TabablzControl tc) => new(tc.ItemsPresenterWidth, tc.ItemsPresenterHeight);
+        public Point popTheshold(DragablzItem tc) => new(tc.ItemsPresenterWidth, tc.ItemsPresenterHeight);
 
         private bool MonitorReentry(DragablzDragDeltaEventArgs e)
         {
             var screenMousePosition = PointToScreen(Mouse.GetPosition(this));
 
-            var sourceTabablzControl = (TabablzControl)e.Source;
+            var sourceTabablzControl = (DragablzItem)e.Source;
             if (sourceTabablzControl.Items.Count > 1 && e.DragablzItem.LogicalIndex < sourceTabablzControl.FixedHeaderCount)
             {
                 return false;
@@ -1016,32 +1065,6 @@ namespace Dragablz
             return item;
         }
 
-        private void ItemDragCompleted(object sender, DragablzDragCompletedEventArgs e)
-        {
-            if (!IsMyItem(e.DragablzItem)) return;
-
-            _interTabTransfer = null;
-            LockedMeasure = null;
-            IsDraggingWindow = false;
-        }
-
-        private void ItemDragDelta(object sender, DragablzDragDeltaEventArgs e)
-        {
-            if (!IsMyItem(e.DragablzItem)) return;
-            if (FixedHeaderCount > 0 &&
-                ItemsOrganiser.Sort(DragablzItems())
-                    .Take(FixedHeaderCount)
-                    .Contains(e.DragablzItem))
-                return;
-
-            if (_tabHeaderDragStartInformation == null ||
-                !Equals(_tabHeaderDragStartInformation.DragItem, e.DragablzItem) || InterTabController == null) return;
-
-            if (InterTabController.InterTabClient == null)
-                throw new InvalidOperationException("An InterTabClient must be provided on an InterTabController.");
-
-            MonitorBreach(e);
-        }
 
         private bool IsMyItem(DragablzItem item)
         {
@@ -1126,12 +1149,12 @@ namespace Dragablz
             e.Cancel = true;
         }
 
-        private bool IsTransposing(TabablzControl target)
+        private bool IsTransposing(DragablzItem target)
         {
             return IsVertical(this) != IsVertical(target);
         }
 
-        private static bool IsVertical(TabablzControl tabControl)
+        private static bool IsVertical(DragablzItem tabControl)
         {
             return tabControl.TabStripPlacement == Dock.Left
                    || tabControl.TabStripPlacement == Dock.Right;
@@ -1325,27 +1348,22 @@ namespace Dragablz
                 : _itemsHolder?.Children.Cast<ContentPresenter>().FirstOrDefault(cp => cp.Content == data);
         }
 
-        private void ItemContainerGeneratorOnStatusChanged(object sender, EventArgs eventArgs)
-        {
-            MarkWrappedTabItems();
-            MarkInitialSelection();
-        }
 
-        private static void CloseItem(DragablzItem item, TabablzControl owner)
+        private static void CloseItem(DragablzItem item, DragablzItem owner)
         {
             if (item == null)
                 throw new ApplicationException("Valid DragablzItem to close is required.");
 
             if (owner == null)
-                throw new ApplicationException("Valid TabablzControl container is required.");
+                throw new ApplicationException("Valid DragablzItem container is required.");
 
             if (!owner.IsMyItem(item))
-                throw new ApplicationException("TabablzControl container must be an owner of the DragablzItem to close");
+                throw new ApplicationException("DragablzItem container must be an owner of the DragablzItem to close");
 
             var cancel = false;
             if (owner.ClosingItemCallback != null)
             {
-                var callbackArgs = new ItemActionCallbackArgs<TabablzControl>(Window.GetWindow(owner), owner, item);
+                var callbackArgs = new ItemActionCallbackArgs<DragablzItem>(Window.GetWindow(owner), owner, item);
                 owner.ClosingItemCallback(callbackArgs);
                 cancel = callbackArgs.IsCancelled;
             }
@@ -1368,7 +1386,7 @@ namespace Dragablz
             CloseItem(owner.Item1, owner.Item2);
         }
 
-        private static Tuple<DragablzItem, TabablzControl> FindOwner(object eventParameter, object eventOriginalSource)
+        private static Tuple<DragablzItem, DragablzItem> FindOwner(object eventParameter, object eventOriginalSource)
         {
             var dragablzItem = eventParameter as DragablzItem;
             if (dragablzItem == null)
@@ -1387,9 +1405,9 @@ namespace Dragablz
 
             if (dragablzItem == null) return null;
 
-            var tabablzControl = LoadedInstances.FirstOrDefault(tc => tc.IsMyItem(dragablzItem));
+            var DragablzItem = LoadedInstances.FirstOrDefault(tc => tc.IsMyItem(dragablzItem));
 
-            return tabablzControl == null ? null : new Tuple<DragablzItem, TabablzControl>(dragablzItem, tabablzControl);
+            return DragablzItem == null ? null : new Tuple<DragablzItem, DragablzItem>(dragablzItem, DragablzItem);
         }
 
         private void AddItemHandler(object sender, ExecutedRoutedEventArgs e)

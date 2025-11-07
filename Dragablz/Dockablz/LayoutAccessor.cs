@@ -10,7 +10,7 @@ namespace Dragablz.Dockablz
     {
         private readonly Layout _layout;
         private readonly BranchAccessor _branchAccessor;
-        private readonly TabablzControl _tabablzControl;
+        private readonly DragablzItem _tabablzControl;
 
         public LayoutAccessor(Layout layout)
         {
@@ -22,7 +22,7 @@ namespace Dragablz.Dockablz
             if (branch != null)
                 _branchAccessor = new BranchAccessor(branch);
             else
-                _tabablzControl = Layout.Content as TabablzControl;
+                _tabablzControl = Layout.Content as DragablzItem;
         }
 
         public Layout Layout
@@ -46,7 +46,7 @@ namespace Dragablz.Dockablz
         /// <summary>
         /// <see cref="BranchAccessor"/> and <see cref="TabablzControl"/> are mutually exclusive, according to whether the layout has been split, or just contains a tab control.
         /// </summary>
-        public TabablzControl TabablzControl
+        public DragablzItem TabablzControl
         {
             get { return _tabablzControl; }
         }
@@ -57,7 +57,7 @@ namespace Dragablz.Dockablz
         /// </summary>
         public LayoutAccessor Visit(
             Action<BranchAccessor> branchVisitor = null,
-            Action<TabablzControl> tabablzControlVisitor = null,
+            Action<DragablzItem> tabablzControlVisitor = null,
             Action<object> contentVisitor = null)
         {
             if (_branchAccessor != null)
@@ -88,19 +88,19 @@ namespace Dragablz.Dockablz
         /// Gets all the Tabablz controls in a Layout, regardless of location.
         /// </summary>
         /// <returns></returns>
-        public IEnumerable<TabablzControl> TabablzControls()
+        public IEnumerable<DragablzItem> TabablzControls()
         {
-            var tabablzControls = new List<TabablzControl>();
+            var tabablzControls = new List<DragablzItem>();
             this.Visit(tabablzControls, BranchAccessorVisitor, TabablzControlVisitor);
             return tabablzControls;
         }
 
-        private static void TabablzControlVisitor(IList<TabablzControl> resultSet, TabablzControl tabablzControl)
+        private static void TabablzControlVisitor(IList<DragablzItem> resultSet, DragablzItem tabablzControl)
         {
             resultSet.Add(tabablzControl);
         }
 
-        private static void BranchAccessorVisitor(IList<TabablzControl> resultSet, BranchAccessor branchAccessor)
+        private static void BranchAccessorVisitor(IList<DragablzItem> resultSet, BranchAccessor branchAccessor)
         {
             branchAccessor
                 .Visit(resultSet, BranchItem.First, BranchAccessorVisitor, TabablzControlVisitor)
