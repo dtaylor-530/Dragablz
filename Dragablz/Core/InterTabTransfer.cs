@@ -6,11 +6,6 @@ using Dragablz.Dockablz;
 
 namespace Dragablz.Core
 {
-    internal enum InterTabTransferReason
-    {
-        Breach,
-        Reentry
-    }
 
     internal class InterTabTransfer
     {

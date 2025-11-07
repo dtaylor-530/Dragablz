@@ -45,7 +45,7 @@ namespace DragablzDemo
                 _rootNode.Children.Add(layoutNode);
 
                 FloatingItemsVisitor(layoutNode, layoutAccessor);
-                layoutAccessor.Visit(layoutNode, BranchAccessorVisitor, TabablzControlVisitor);
+                layoutAccessor.Visit(layoutNode, BranchAccessorVisitor, DragablzItemVisitor);
             }
         }
 
@@ -66,9 +66,9 @@ namespace DragablzDemo
             layoutNode.Children.Add(floatingItemsNode);
         }
 
-        private static void TabablzControlVisitor(TreeNode treeNode, TabablzControl tabablzControl)
+        private static void DragablzItemVisitor(TreeNode treeNode, DragablzItem DragablzItem)
         {
-            treeNode.Children.Add(new TreeNode { Content = new TabablzControlProxy(tabablzControl) });
+            treeNode.Children.Add(new TreeNode { Content = new DragablzItemProxy(DragablzItem) });
         }
 
         private static void BranchAccessorVisitor(TreeNode treeNode, BranchAccessor branchAccessor)
@@ -82,8 +82,8 @@ namespace DragablzDemo
             branchNode.Children.Add(secondBranchNode);
 
             branchAccessor
-                .Visit(firstBranchNode, BranchItem.First, BranchAccessorVisitor, TabablzControlVisitor)
-                .Visit(secondBranchNode, BranchItem.Second, BranchAccessorVisitor, TabablzControlVisitor);
+                .Visit(firstBranchNode, BranchItem.First, BranchAccessorVisitor, DragablzItemVisitor)
+                .Visit(secondBranchNode, BranchItem.Second, BranchAccessorVisitor, DragablzItemVisitor);
         }
     }
 }

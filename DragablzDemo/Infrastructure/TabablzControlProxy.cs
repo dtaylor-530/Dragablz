@@ -6,16 +6,16 @@ using Dragablz.Dockablz;
 
 namespace DragablzDemo
 {
-    public class TabablzControlProxy : INotifyPropertyChanged
+    public class DragablzItemProxy : INotifyPropertyChanged
     {
-        private readonly TabablzControl _tabablzControl;
+        private readonly DragablzItem _DragablzItem;
         private readonly ICommand _splitHorizontallyCommand;
         private readonly ICommand _splitVerticallyCommand;
         private double _splitRatio;
 
-        public TabablzControlProxy(TabablzControl tabablzControl)
+        public DragablzItemProxy(DragablzItem DragablzItem)
         {
-            _tabablzControl = tabablzControl;
+            _DragablzItem = DragablzItem;
 
             _splitHorizontallyCommand = new AnotherCommandImplementation(_ => Branch(Orientation.Horizontal));
             _splitVerticallyCommand = new AnotherCommandImplementation(_ => Branch(Orientation.Vertical));
@@ -44,16 +44,16 @@ namespace DragablzDemo
 
         private void Branch(Orientation orientation)
         {
-            var branchResult = Layout.Branch(_tabablzControl, orientation, false, SplitRatio / 10);
+            var branchResult = Layout.Branch(_DragablzItem, orientation, false, SplitRatio / 10);
 
             var newItem = new HeaderedItemViewModel
             {
                 Header = "Code-Wise",
-                Content = "This item was added in via code, using Layout.Branch, and TabablzControl.AddToSource"
+                Content = "This item was added in via code, using Layout.Branch, and DragablzItem.AddToSource"
             };
 
-            branchResult.TabablzControl.AddToSource(newItem);
-            branchResult.TabablzControl.SelectedItem = newItem;
+            branchResult.DragablzItem.AddToSource(newItem);
+            branchResult.DragablzItem.SelectedItem = newItem;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

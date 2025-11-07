@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
-namespace Dragablz
+namespace DragablzDemo
 {
     /// <summary>
     /// Helper class to create view models, particularly for tool/MDI windows.

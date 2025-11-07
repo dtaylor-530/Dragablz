@@ -50,7 +50,7 @@ namespace DragablzDemo
         /// <summary>
         /// Callback to handle tab closing.
         /// </summary>
-        private static void ClosingTabItemHandlerImpl(ItemActionCallbackArgs<TabablzControl> args)
+        private static void ClosingTabItemHandlerImpl(ItemActionCallbackArgs<DragablzItem> args)
         {
             //in here you can dispose stuff or cancel the close
 

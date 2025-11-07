@@ -3,32 +3,21 @@ using System.Windows;
 
 namespace Dragablz
 {
-    internal class ContainerCustomisations
+    internal class ContainerCustomisations(Func<DragablzItem> getContainerForItemOverride = null, Action<DependencyObject, object> prepareContainerForItemOverride = null, Action<DependencyObject, object> clearingContainerForItemOverride = null)
     {
-        private readonly Func<DragablzItem> _getContainerForItemOverride;
-        private readonly Action<DependencyObject, object> _prepareContainerForItemOverride;
-        private readonly Action<DependencyObject, object> _clearingContainerForItemOverride;
-
-        public ContainerCustomisations(Func<DragablzItem> getContainerForItemOverride = null, Action<DependencyObject, object> prepareContainerForItemOverride = null, Action<DependencyObject, object> clearingContainerForItemOverride = null)
+        public DragablzItem? GetContainerForItemOverride()
         {
-            _getContainerForItemOverride = getContainerForItemOverride;
-            _prepareContainerForItemOverride = prepareContainerForItemOverride;
-            _clearingContainerForItemOverride = clearingContainerForItemOverride;
+            return getContainerForItemOverride?.Invoke();
         }
 
-        public Func<DragablzItem> GetContainerForItemOverride
+        public void PrepareContainerForItemOverride(DependencyObject dObj, object obj)
         {
-            get { return _getContainerForItemOverride; }
+            prepareContainerForItemOverride?.Invoke(dObj, obj);
         }
 
-        public Action<DependencyObject, object> PrepareContainerForItemOverride
+        public void ClearingContainerForItemOverride(DependencyObject dObj, object obj)
         {
-            get { return _prepareContainerForItemOverride; }
-        }
-
-        public Action<DependencyObject, object> ClearingContainerForItemOverride
-        {
-            get { return _clearingContainerForItemOverride; }
+            clearingContainerForItemOverride?.Invoke(dObj, obj);
         }
     }
 }
